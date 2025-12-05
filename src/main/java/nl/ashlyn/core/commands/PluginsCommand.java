@@ -32,7 +32,7 @@ public class PluginsCommand implements CommandExecutor {
         if (pluginList.length() == 0) {
             sender.sendMessage("No plugins found.");
         } else {
-            sender.sendMessage(ChatColor.GOLD + "AshlynSMP Custom Plugins:\n" + pluginList);
+            sender.sendMessage(ChatColor.GOLD + "Ashlyn SMP Custom Plugins:\n" + pluginList);
         }
 
         return true;

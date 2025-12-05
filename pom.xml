@@ -6,7 +6,7 @@
 
     <groupId>nl.ashlyn</groupId>
     <artifactId>Core</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <name>Core</name>
@@ -15,14 +15,6 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Ashlyn SMP Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/ashlynsmp/core</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <finalName>Core</finalName>

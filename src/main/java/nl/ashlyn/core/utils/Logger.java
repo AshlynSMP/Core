@@ -14,4 +14,12 @@ public class Logger {
     public static void logRadio(String message) {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GOLD + "[Radio] " + message);
     }
+
+    public static void logPropaganda(String message) {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Propaganda] " + message);
+    }
+
+    public static void logCredits(String message) {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_BLUE + "[Credits] " + message);
+    }
 }

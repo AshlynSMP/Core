@@ -34,6 +34,51 @@ public class CoreConfig {
     }
 
     /**
+     * Set the list of leaders in the config
+     * @param leaders List of leader usernames
+     */
+    public static void setLeaders(List<String> leaders) {
+        Core.getCoreConfig().set("leaders", leaders);
+    }
+
+    /**
+     * Add a leader to the config
+     * @param username The username to add
+     */
+    public static void addLeader(String username) {
+        List<String> leaders = getLeaders();
+        if (!leaders.contains(username)) {
+            leaders.add(username);
+            setLeaders(leaders);
+        }
+    }
+
+    /**
+     * Remove a leader from the config
+     * @param username The username to remove
+     */
+    public static void removeLeader(String username) {
+        List<String> leaders = getLeaders();
+        leaders.remove(username);
+        setLeaders(leaders);
+    }
+
+    /**
+     * Set whether lore feature is enabled
+     * @param enabled true to enable lore, false to disable
+     */
+    public static void setLoreEnabled(boolean enabled) {
+        Core.getCoreConfig().set("lore-enabled", enabled);
+    }
+
+    /**
+     * Save the configuration to disk
+     */
+    public static void saveConfig() {
+        Core.getInstance().saveConfig();
+    }
+
+    /**
      * Reload the Core configuration
      */
     public static void reloadConfig() {
