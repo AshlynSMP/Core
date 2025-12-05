@@ -1,0 +1,10 @@
+name: Core
+version: '0.0.1'
+main: nl.ashlyn.core.Core
+description: Core plugin voor de AshlynSMP server.
+api-version: '1.21'
+authors: [ ntnt]
+commands:
+    ashlynplugins:
+        description: Bekijk alle AshlynSMP plugins die geïnstalleerd zijn op de server.
+        usage: /ashlynplugins
