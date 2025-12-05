@@ -15,5 +15,9 @@ public class CoreAPI {
     public static FileConfiguration getConfig() {
         return Core.getCoreConfig();
     }
+
+    public static String getVersion() {
+        return Core.getInstance().getDescription().getVersion();
+    }
 }
 

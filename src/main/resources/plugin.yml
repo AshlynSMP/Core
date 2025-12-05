@@ -1,5 +1,5 @@
 name: Core
-version: '0.0.1'
+version: '${project.version}'
 main: nl.ashlyn.core.Core
 description: Core plugin voor de AshlynSMP server.
 api-version: '1.21'
