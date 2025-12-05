@@ -16,6 +16,10 @@ public class CoreAPI {
         return Core.getCoreConfig();
     }
 
+    /**
+     * Get the plugin's version
+     * @return String of the plugin's version
+     */
     public static String getVersion() {
         return Core.getInstance().getDescription().getVersion();
     }
