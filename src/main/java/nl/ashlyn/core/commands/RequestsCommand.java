@@ -62,7 +62,6 @@ public class RequestsCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    // Looks the account up at Mojang first (off the main thread), so a typo doesn't end up on the whitelist
     private void accept(CommandSender sender, Request request) {
         Bukkit.createPlayerProfile(request.name()).update().whenComplete((profile, error) ->
                 Bukkit.getScheduler().runTask(Core.getInstance(), () -> {

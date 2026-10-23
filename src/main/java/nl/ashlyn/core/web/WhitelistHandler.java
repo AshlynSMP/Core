@@ -90,7 +90,6 @@ public class WhitelistHandler {
         }
     }
 
-    // Runs on the main thread, since Bukkit and the config are not thread safe
     private <T> T callSync(Callable<T> task, T fallback) {
         try {
             return plugin.getServer().getScheduler().callSyncMethod(plugin, task).get(5, TimeUnit.SECONDS);

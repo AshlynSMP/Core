@@ -21,7 +21,7 @@ web:
     allowed-origin: 'https://your-website.example'
 ```
 
-`GET /api/status` returns online players (health, level, dimension, ping and stats), every player that ever joined with their playtime, deaths and kills, the latest joins/leaves/deaths/advancements, lore mode, ceasefire, radio tower status, the world day/time/weather and the installed Ashlyn plugins as JSON. It's refreshed every `refresh-seconds` on the main thread.
+`GET /api/status` returns online players (health, level, dimension, ping and stats), every player that ever joined with their playtime, deaths and kills, the latest joins/leaves/deaths/advancements, lore mode, ceasefire, radio tower status, the world day/time/weather and the installed Ashlyn plugins as JSON. It's refreshed every `refresh-seconds` on the main thread. Set `web.status-enabled: false` to turn this endpoint off; the whitelist requests keep working, and the website then shows the server as offline.
 
 ## Whitelist requests
 

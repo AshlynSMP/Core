@@ -24,6 +24,7 @@ web:
     bind: '0.0.0.0'
     port: 8150
     allowed-origin: '*'
+    status-enabled: true
     show-players: true
     refresh-seconds: 5
     roster-refresh-seconds: 60

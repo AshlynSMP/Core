@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
  * Created by Ashlyn on 23/10/2026
  *
  * Small HTTP API for the AshlynSMP website.
- * GET /api/status returns the live server state as JSON.
+ * GET /api/status returns the live server state as JSON (turn off with web.status-enabled).
  * /api/whitelist takes whitelist requests, see WhitelistHandler.
  */
 public class WebServer {
@@ -45,21 +45,22 @@ public class WebServer {
         String bind = config.getString("web.bind", "0.0.0.0");
         int port = config.getInt("web.port", 8150);
         String allowedOrigin = config.getString("web.allowed-origin", "*");
+        boolean statusEnabled = config.getBoolean("web.status-enabled", true);
         boolean showPlayers = config.getBoolean("web.show-players", true);
         int refreshSeconds = Math.max(1, config.getInt("web.refresh-seconds", 5));
         int rosterRefreshSeconds = Math.max(10, config.getInt("web.roster-refresh-seconds", 60));
 
-        if (showPlayers) {
+        // Without the status endpoint there's nothing to collect, so skip the snapshot work entirely
+        if (statusEnabled && showPlayers) {
             activity = new ActivityFeed(config.getInt("web.activity-size", 30));
             plugin.getServer().getPluginManager().registerEvents(activity, plugin);
-        }
-
-        if (showPlayers) {
             rosterTask = plugin.getServer().getScheduler().runTaskTimer(plugin,
                     () -> roster = StatusSnapshot.buildRoster(), 0L, rosterRefreshSeconds * 20L);
         }
-        snapshotTask = plugin.getServer().getScheduler().runTaskTimer(plugin,
-                () -> snapshot = StatusSnapshot.build(showPlayers, roster, activity).toString(), 1L, refreshSeconds * 20L);
+        if (statusEnabled) {
+            snapshotTask = plugin.getServer().getScheduler().runTaskTimer(plugin,
+                    () -> snapshot = StatusSnapshot.build(showPlayers, roster, activity).toString(), 1L, refreshSeconds * 20L);
+        }
 
         try {
             server = HttpServer.create(new InetSocketAddress(bind, port), 0);
@@ -69,10 +70,12 @@ public class WebServer {
         }
 
         WhitelistHandler whitelist = new WhitelistHandler(plugin);
-        server.createContext("/api/status", exchange -> {
-            if (preflight(exchange, allowedOrigin)) return;
-            handle(exchange);
-        });
+        if (statusEnabled) {
+            server.createContext("/api/status", exchange -> {
+                if (preflight(exchange, allowedOrigin)) return;
+                handle(exchange);
+            });
+        }
         server.createContext("/api/whitelist", exchange -> {
             if (preflight(exchange, allowedOrigin)) return;
             whitelist.handle(exchange);
