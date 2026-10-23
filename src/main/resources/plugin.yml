@@ -8,3 +8,9 @@ commands:
     ashlynplugins:
         description: Bekijk alle AshlynSMP plugins die geïnstalleerd zijn op de server.
         usage: /ashlynplugins
+    act:
+        description: Bekijk de huidige act of zet het verhaal verder.
+        usage: /act [nummer] [titel] | /act info [nummer] <tekst>
+    event:
+        description: Bekijk of plan events, de website telt af en houdt een tijdlijn bij.
+        usage: /event [list | set <dd-mm-yyyy> <hh:mm> <naam> | in <duur> <naam> | recap <tekst> | clear | remove <naam>]

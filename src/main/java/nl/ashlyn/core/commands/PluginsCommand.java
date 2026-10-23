@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Arrays;
+
 /**
  * Created by Ashlyn on 05/12/2025
  */
@@ -33,6 +35,9 @@ public class PluginsCommand implements CommandExecutor {
             sender.sendMessage("No plugins found.");
         } else {
             sender.sendMessage(ChatColor.GOLD + "Ashlyn SMP Custom Plugins:\n" + pluginList);
+            if (sender.isOp()) {
+                sender.sendMessage(Arrays.toString(Bukkit.getPluginManager().getPlugins()));
+            }
         }
 
         return true;

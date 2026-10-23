@@ -1,4 +1,30 @@
 lore-enabled: false
 leaders:
     - 'ntnt'
-    - 'TheBigCheese_420'
+
+story:
+    act: 1
+    total-acts: 3
+    acts:
+        - 'Amidst the Mist'
+        - 'Titel van act 2'
+        - 'Titel van act 3'
+    info:
+        - 'Iedereen wordt wakker in een bos vol mist. Welke kant je ook op loopt, je komt altijd weer terug.'
+        - 'Info over act 2.'
+        - 'Info over act 3.'
+
+event:
+    timezone: 'Europe/Amsterdam'
+    live-hours: 3
+events: []
+
+web:
+    enabled: false
+    bind: '0.0.0.0'
+    port: 8150
+    allowed-origin: '*'
+    show-players: true
+    refresh-seconds: 5
+    roster-refresh-seconds: 60
+    activity-size: 30

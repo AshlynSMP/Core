@@ -1,7 +1,10 @@
 package nl.ashlyn.core;
 
+import nl.ashlyn.core.commands.ActCommand;
+import nl.ashlyn.core.commands.EventCommand;
 import nl.ashlyn.core.commands.PluginsCommand;
 import nl.ashlyn.core.utils.Logger;
+import nl.ashlyn.core.web.WebServer;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
@@ -11,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Core extends JavaPlugin {
 
     private static Core instance;
+    private WebServer webServer;
 
     @Override
     public void onEnable() {
@@ -20,6 +24,9 @@ public final class Core extends JavaPlugin {
         registerCommands();
         registerListeners();
 
+        webServer = new WebServer(this);
+        webServer.start();
+
         Logger.logCore("+=========================================+");
         Logger.logCore("Ashlyn Core Initiated! (Build: v" + getDescription().getVersion() + ")");
         Logger.logCore("+=========================================+");
@@ -27,6 +34,8 @@ public final class Core extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (webServer != null) webServer.stop();
+
         Logger.logCore("+=========================================+");
         Logger.logCore("Ashlyn Core Disabled! (Build: v" + getDescription().getVersion() + ")");
         Logger.logCore("+=========================================+");
@@ -51,6 +60,10 @@ public final class Core extends JavaPlugin {
 
     private void registerCommands() {
         registerCommand("ashlynplugins", new PluginsCommand());
+        EventCommand eventCommand = new EventCommand();
+        registerCommand("event", eventCommand);
+        getCommand("event").setTabCompleter(eventCommand);
+        registerCommand("act", new ActCommand());
     }
 
     private void registerListeners() {
