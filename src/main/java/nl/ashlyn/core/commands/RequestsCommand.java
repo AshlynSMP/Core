@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import nl.ashlyn.core.Core;
 import nl.ashlyn.core.api.CoreConfig;
 import nl.ashlyn.core.web.WhitelistRequests;
 import nl.ashlyn.core.web.WhitelistRequests.Request;
@@ -57,14 +58,22 @@ public class RequestsCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist add " + request.name());
-        if (!WhitelistRequests.isWhitelisted(request.name())) {
-            sender.sendMessage(ChatColor.RED + "Kon " + request.name() + " niet op de whitelist zetten. Bestaat dit Minecraft-account wel?");
-            return true;
-        }
-        WhitelistRequests.remove(request.name());
-        sender.sendMessage(ChatColor.GREEN + request.name() + " staat nu op de whitelist.");
+        accept(sender, request);
         return true;
+    }
+
+    // Looks the account up at Mojang first (off the main thread), so a typo doesn't end up on the whitelist
+    private void accept(CommandSender sender, Request request) {
+        Bukkit.createPlayerProfile(request.name()).update().whenComplete((profile, error) ->
+                Bukkit.getScheduler().runTask(Core.getInstance(), () -> {
+                    if (error != null || profile == null || profile.getUniqueId() == null || profile.getName() == null) {
+                        sender.sendMessage(ChatColor.RED + "Kon " + request.name() + " niet op de whitelist zetten. Bestaat dit Minecraft-account wel?");
+                        return;
+                    }
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist add " + profile.getName());
+                    WhitelistRequests.remove(request.name());
+                    sender.sendMessage(ChatColor.GREEN + profile.getName() + " staat nu op de whitelist.");
+                }));
     }
 
     @Override

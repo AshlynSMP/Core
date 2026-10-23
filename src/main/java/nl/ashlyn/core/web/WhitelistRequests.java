@@ -77,7 +77,7 @@ public class WhitelistRequests {
         save(yaml);
     }
 
-    public static boolean isWhitelisted(String name) {
+    private static boolean isWhitelisted(String name) {
         for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()) {
             if (name.equalsIgnoreCase(player.getName())) return true;
         }
