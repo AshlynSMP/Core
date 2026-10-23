@@ -59,7 +59,6 @@ public class StatusSnapshot {
                 p.addProperty("leader", CoreConfig.isLeader(player.getName()));
                 p.addProperty("op", player.isOp());
                 p.addProperty("health", Math.round(player.getHealth() * 10) / 10.0);
-                p.addProperty("food", player.getFoodLevel());
                 p.addProperty("level", player.getLevel());
                 p.addProperty("dimension", dimension(player.getWorld()));
                 p.addProperty("ping", player.getPing());

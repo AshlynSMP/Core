@@ -3,6 +3,8 @@ package nl.ashlyn.core;
 import nl.ashlyn.core.commands.ActCommand;
 import nl.ashlyn.core.commands.EventCommand;
 import nl.ashlyn.core.commands.PluginsCommand;
+import nl.ashlyn.core.commands.RequestsCommand;
+import nl.ashlyn.core.listeners.RequestsReminder;
 import nl.ashlyn.core.utils.Logger;
 import nl.ashlyn.core.web.WebServer;
 import org.bukkit.command.CommandExecutor;
@@ -64,10 +66,13 @@ public final class Core extends JavaPlugin {
         registerCommand("event", eventCommand);
         getCommand("event").setTabCompleter(eventCommand);
         registerCommand("act", new ActCommand());
+        RequestsCommand requestsCommand = new RequestsCommand();
+        registerCommand("aanvragen", requestsCommand);
+        getCommand("aanvragen").setTabCompleter(requestsCommand);
     }
 
     private void registerListeners() {
-        // Future listener registrations will go here
+        registerListener(new RequestsReminder(), this);
     }
 
     private void registerCommand(String name, CommandExecutor executor) {

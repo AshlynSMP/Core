@@ -19,8 +19,9 @@ import java.util.concurrent.Executors;
 /**
  * Created by Ashlyn on 23/10/2026
  *
- * Small read-only HTTP API for the AshlynSMP website.
+ * Small HTTP API for the AshlynSMP website.
  * GET /api/status returns the live server state as JSON.
+ * /api/whitelist takes whitelist requests, see WhitelistHandler.
  */
 public class WebServer {
 
@@ -67,7 +68,15 @@ public class WebServer {
             return;
         }
 
-        server.createContext("/api/status", exchange -> handle(exchange, allowedOrigin));
+        WhitelistHandler whitelist = new WhitelistHandler(plugin);
+        server.createContext("/api/status", exchange -> {
+            if (preflight(exchange, allowedOrigin)) return;
+            handle(exchange);
+        });
+        server.createContext("/api/whitelist", exchange -> {
+            if (preflight(exchange, allowedOrigin)) return;
+            whitelist.handle(exchange);
+        });
         executor = Executors.newFixedThreadPool(2);
         server.setExecutor(executor);
         server.start();
@@ -82,17 +91,19 @@ public class WebServer {
         if (executor != null) executor.shutdownNow();
     }
 
-    private void handle(HttpExchange exchange, String allowedOrigin) throws IOException {
+    // Adds the CORS headers and answers the browser's preflight request; returns true when it was one
+    private static boolean preflight(HttpExchange exchange, String allowedOrigin) throws IOException {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", allowedOrigin);
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+        if (!exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) return false;
+        exchange.sendResponseHeaders(204, -1);
+        exchange.close();
+        return true;
+    }
 
-        String method = exchange.getRequestMethod();
-        if (method.equalsIgnoreCase("OPTIONS")) {
-            exchange.sendResponseHeaders(204, -1);
-            exchange.close();
-            return;
-        }
-        if (!method.equalsIgnoreCase("GET")) {
+    private void handle(HttpExchange exchange) throws IOException {
+        if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
             exchange.sendResponseHeaders(405, -1);
             exchange.close();
             return;

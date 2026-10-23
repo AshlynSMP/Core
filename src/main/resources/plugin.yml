@@ -14,3 +14,6 @@ commands:
     event:
         description: Bekijk of plan events, de website telt af en houdt een tijdlijn bij.
         usage: /event [list | set <dd-mm-yyyy> <hh:mm> <naam> | in <duur> <naam> | recap <tekst> | clear | remove <naam>]
+    aanvragen:
+        description: Bekijk en behandel whitelist-aanvragen van de website.
+        usage: /aanvragen [accept | deny <naam>]

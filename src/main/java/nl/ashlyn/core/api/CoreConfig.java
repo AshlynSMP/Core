@@ -233,6 +233,22 @@ public class CoreConfig {
     }
 
     /**
+     * Check if the website takes whitelist requests
+     * @return true if requests are open, false otherwise
+     */
+    public static boolean isWhitelistRequestsOpen() {
+        return Core.getCoreConfig().getBoolean("web.whitelist-requests.open", true);
+    }
+
+    /**
+     * Get how many whitelist requests can be open at once
+     * @return Maximum number of open requests
+     */
+    public static int getMaxWhitelistRequests() {
+        return Core.getCoreConfig().getInt("web.whitelist-requests.max-pending", 100);
+    }
+
+    /**
      * Save the configuration to disk
      */
     public static void saveConfig() {

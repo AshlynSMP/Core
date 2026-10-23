@@ -28,3 +28,6 @@ web:
     refresh-seconds: 5
     roster-refresh-seconds: 60
     activity-size: 30
+    whitelist-requests:
+        open: true
+        max-pending: 100

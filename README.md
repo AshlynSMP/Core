@@ -12,7 +12,7 @@ Core is a comprehensive Spigot/Paper plugin designed specifically for the Ashlyn
 
 ## Web API
 
-Core can serve a small read-only status API for the AshlynSMP website. Turn it on in `config.yml`:
+Core can serve a small API for the AshlynSMP website. Turn it on in `config.yml`:
 
 ```yaml
 web:
@@ -21,7 +21,17 @@ web:
     allowed-origin: 'https://your-website.example'
 ```
 
-`GET /api/status` returns online players (health, hunger, level, dimension, ping and stats), every player that ever joined with their playtime, deaths and kills, the latest joins/leaves/deaths/advancements, lore mode, ceasefire, radio tower status, the world day/time/weather and the installed Ashlyn plugins as JSON. It's refreshed every `refresh-seconds` on the main thread.
+`GET /api/status` returns online players (health, level, dimension, ping and stats), every player that ever joined with their playtime, deaths and kills, the latest joins/leaves/deaths/advancements, lore mode, ceasefire, radio tower status, the world day/time/weather and the installed Ashlyn plugins as JSON. It's refreshed every `refresh-seconds` on the main thread.
+
+## Whitelist requests
+
+Before the season starts, the website shows a form where players can ask to be whitelisted. Requests go to `POST /api/whitelist` and are kept in `plugins/Core/requests.yml` until a leader handles them. Online leaders get a chat message for every new one, and leaders who join later are told how many are waiting. This needs the web API to be on (`web.enabled: true`).
+
+- `/aanvragen` - list the open requests, with buttons to accept or deny
+- `/aanvragen accept <naam>` - put the player on the whitelist (the request stays if that fails, e.g. when the account doesn't exist)
+- `/aanvragen deny <naam>` - drop the request
+
+Close the form with `web.whitelist-requests.open: false`; the website then hides it. Each visitor can send 5 requests per 10 minutes, and at most `max-pending` requests can be open at once.
 
 ## Story
 
