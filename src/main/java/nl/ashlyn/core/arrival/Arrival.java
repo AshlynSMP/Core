@@ -43,6 +43,7 @@ public class Arrival {
     private static final Random RANDOM = new Random();
     private static final int ATTEMPTS = 300;
     private static final long TICKS_BETWEEN = 2L;
+    private static final long DUSK = 12500L;
     private static final String TITLE = "{\"text\":\"幕\uDAC0\uDC00\uDAC0\uDC00\uDAC0\uDC00\uDAFF\uDFFF壱\",\"shadow_color\":false}";
     private static final Set<Material> UNSAFE = Set.of(Material.MAGMA_BLOCK, Material.CACTUS, Material.CAMPFIRE,
             Material.SOUL_CAMPFIRE, Material.POWDER_SNOW, Material.POINTED_DRIPSTONE);
@@ -88,6 +89,8 @@ public class Arrival {
     }
 
     public static int start() {
+        Location center = CoreConfig.getForestCenter();
+        if (center != null) center.getWorld().setTime(DUSK);
         List<Player> players = waiting();
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);

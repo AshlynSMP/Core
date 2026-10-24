@@ -70,7 +70,7 @@ How players start the season. While the arrival is on, every player who hasn't r
 - `/aankomst aan` / `/aankomst uit` - turn the arrival on or off
 - `/aankomst hok` - set the hok at your position
 - `/aankomst bos <straal> [afstand]` - set the forest center at your position, how far from it players can land and how far apart they land at least (25 by default)
-- `/aankomst start` - spread everyone in the hok over the forest
+- `/aankomst start` - set the forest world to just before nightfall and spread everyone in the hok over the forest
 - `/aankomst naam <speler> <naam>` - set the real name of a player, for players whitelisted without a request
 - `/aankomst papier <speler>` - give a player a new name paper
 - `/aankomst reset <speler>` - let a player go through the arrival again, for testing
