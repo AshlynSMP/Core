@@ -33,6 +33,8 @@ Before the season starts, the website shows a form where players can ask to be w
 
 Close the form with `web.whitelist-requests.open: false`; the website then hides it. Each visitor can send 5 requests per 10 minutes, and at most `max-pending` requests can be open at once.
 
+When a request is accepted, the real name from the form is saved in `plugins/Core/names.yml`. Other plugins can read it with `RealNames.get(player)`, which falls back to an open request and then to the Minecraft name.
+
 ## Wrapped
 
 Core keeps track of season stats Minecraft doesn't store itself, for the end of season recap on the website: time per dimension, which hours people play, days played, longest session and advancements. They're kept in `plugins/Core/wrapped.yml`.
@@ -59,6 +61,21 @@ Leaders plan events in-game. The website counts down to the next one and keeps e
 - `/event clear` - cancel the next planned event
 - `/event remove <naam>` - remove an event from the timeline
 - `/event` and `/event list` - show the next or all planned events (everyone)
+
+## Arrival
+
+How players start the season. While the arrival is on, every player who hasn't reached the forest yet gets a paper with their real name and is sent to the hok, where everyone waits together. When a leader starts it, they're spread over the forest at random safe spots on the ground, away from each other, and see the arrival title. Players who join for the first time after that pass through the hok and go to the forest after a few seconds. Who already arrived is kept in `plugins/Core/arrivals.yml`.
+
+- `/aankomst` - show how the arrival is set up and how many players are waiting
+- `/aankomst aan` / `/aankomst uit` - turn the arrival on or off
+- `/aankomst hok` - set the hok at your position
+- `/aankomst bos <straal> [afstand]` - set the forest center at your position, how far from it players can land and how far apart they land at least (25 by default)
+- `/aankomst start` - spread everyone in the hok over the forest
+- `/aankomst naam <speler> <naam>` - set the real name of a player, for players whitelisted without a request
+- `/aankomst papier <speler>` - give a player a new name paper
+- `/aankomst reset <speler>` - let a player go through the arrival again, for testing
+
+The title is the Act 1 image from the [resource pack](https://github.com/AshlynSMP/RS-S2), sent without a text shadow.
 
 ## Building from Source
 

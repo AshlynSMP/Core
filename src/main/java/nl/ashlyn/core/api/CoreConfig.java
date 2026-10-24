@@ -1,6 +1,11 @@
 package nl.ashlyn.core.api;
 
 import nl.ashlyn.core.Core;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -246,6 +251,109 @@ public class CoreConfig {
      */
     public static int getMaxWhitelistRequests() {
         return Core.getCoreConfig().getInt("web.whitelist-requests.max-pending", 100);
+    }
+
+    /**
+     * Check if new players go through the arrival (hok, then the forest)
+     * @return true if the arrival is on, false otherwise
+     */
+    public static boolean isArrivalEnabled() {
+        return Core.getCoreConfig().getBoolean("arrival.enabled", false);
+    }
+
+    /**
+     * Turn the arrival on or off
+     * @param enabled true to turn it on, false to turn it off
+     */
+    public static void setArrivalEnabled(boolean enabled) {
+        Core.getCoreConfig().set("arrival.enabled", enabled);
+    }
+
+    /**
+     * Check if the leaders already sent everyone from the hok to the forest
+     * New players then only pass through the hok
+     * @return true if the arrival has started, false otherwise
+     */
+    public static boolean isArrivalStarted() {
+        return Core.getCoreConfig().getBoolean("arrival.started", false);
+    }
+
+    /**
+     * Set whether the arrival has started
+     * @param started true if it has started
+     */
+    public static void setArrivalStarted(boolean started) {
+        Core.getCoreConfig().set("arrival.started", started);
+    }
+
+    /**
+     * Get the place where new players wait together
+     * @return The location, or null if it is not set or its world is not loaded
+     */
+    public static Location getHok() {
+        ConfigurationSection section = Core.getCoreConfig().getConfigurationSection("arrival.hok");
+        if (section == null) return null;
+        World world = Bukkit.getWorld(section.getString("world", ""));
+        if (world == null) return null;
+        return new Location(world, section.getDouble("x"), section.getDouble("y"), section.getDouble("z"),
+                (float) section.getDouble("yaw"), (float) section.getDouble("pitch"));
+    }
+
+    /**
+     * Set the place where new players wait together
+     * @param location The location
+     */
+    public static void setHok(Location location) {
+        FileConfiguration config = Core.getCoreConfig();
+        config.set("arrival.hok.world", location.getWorld().getName());
+        config.set("arrival.hok.x", location.getX());
+        config.set("arrival.hok.y", location.getY());
+        config.set("arrival.hok.z", location.getZ());
+        config.set("arrival.hok.yaw", location.getYaw());
+        config.set("arrival.hok.pitch", location.getPitch());
+    }
+
+    /**
+     * Get the center of the forest players get spread over
+     * @return The location, y is not used, or null if it is not set or its world is not loaded
+     */
+    public static Location getForestCenter() {
+        ConfigurationSection section = Core.getCoreConfig().getConfigurationSection("arrival.forest");
+        if (section == null) return null;
+        World world = Bukkit.getWorld(section.getString("world", ""));
+        if (world == null) return null;
+        return new Location(world, section.getDouble("x"), 0, section.getDouble("z"));
+    }
+
+    /**
+     * Set the forest players get spread over
+     * @param center      The center of the forest
+     * @param radius      How far from the center players can land
+     * @param minDistance How far players land from each other at least
+     */
+    public static void setForest(Location center, int radius, int minDistance) {
+        FileConfiguration config = Core.getCoreConfig();
+        config.set("arrival.forest.world", center.getWorld().getName());
+        config.set("arrival.forest.x", center.getBlockX());
+        config.set("arrival.forest.z", center.getBlockZ());
+        config.set("arrival.forest.radius", radius);
+        config.set("arrival.forest.min-distance", minDistance);
+    }
+
+    /**
+     * Get how far from the forest center players can land
+     * @return Radius in blocks
+     */
+    public static int getForestRadius() {
+        return Math.max(1, Core.getCoreConfig().getInt("arrival.forest.radius", 150));
+    }
+
+    /**
+     * Get how far players land from each other at least, if the forest has room for it
+     * @return Distance in blocks
+     */
+    public static int getForestMinDistance() {
+        return Math.max(0, Core.getCoreConfig().getInt("arrival.forest.min-distance", 25));
     }
 
     /**

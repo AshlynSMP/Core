@@ -20,3 +20,6 @@ commands:
     wrapped:
         description: Beheer Ashlyn Wrapped, het seizoensoverzicht op de website.
         usage: /wrapped [export | reset confirm]
+    aankomst:
+        description: Regel de aankomst, het hok en het verspreiden over het bos.
+        usage: /aankomst [aan | uit | hok | bos <straal> [afstand] | start | naam <speler> <naam> | papier <speler> | reset <speler>]

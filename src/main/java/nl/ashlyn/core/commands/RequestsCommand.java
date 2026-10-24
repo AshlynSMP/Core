@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import nl.ashlyn.core.Core;
 import nl.ashlyn.core.api.CoreConfig;
+import nl.ashlyn.core.api.RealNames;
 import nl.ashlyn.core.web.WhitelistRequests;
 import nl.ashlyn.core.web.WhitelistRequests.Request;
 import org.bukkit.Bukkit;
@@ -70,6 +71,7 @@ public class RequestsCommand implements CommandExecutor, TabCompleter {
                         return;
                     }
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist add " + profile.getName());
+                    if (!request.realName().isEmpty()) RealNames.set(profile.getUniqueId(), request.realName());
                     WhitelistRequests.remove(request.name());
                     sender.sendMessage(ChatColor.GREEN + profile.getName() + " staat nu op de whitelist.");
                 }));

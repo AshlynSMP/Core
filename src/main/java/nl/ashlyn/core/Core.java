@@ -1,10 +1,12 @@
 package nl.ashlyn.core;
 
 import nl.ashlyn.core.commands.ActCommand;
+import nl.ashlyn.core.commands.ArrivalCommand;
 import nl.ashlyn.core.commands.EventCommand;
 import nl.ashlyn.core.commands.PluginsCommand;
 import nl.ashlyn.core.commands.RequestsCommand;
 import nl.ashlyn.core.commands.WrappedCommand;
+import nl.ashlyn.core.listeners.ArrivalListener;
 import nl.ashlyn.core.listeners.RequestsReminder;
 import nl.ashlyn.core.utils.Logger;
 import nl.ashlyn.core.web.WebServer;
@@ -79,10 +81,14 @@ public final class Core extends JavaPlugin {
         WrappedCommand wrappedCommand = new WrappedCommand(seasonTracker, new WrappedExporter(this, seasonTracker));
         registerCommand("wrapped", wrappedCommand);
         getCommand("wrapped").setTabCompleter(wrappedCommand);
+        ArrivalCommand arrivalCommand = new ArrivalCommand();
+        registerCommand("aankomst", arrivalCommand);
+        getCommand("aankomst").setTabCompleter(arrivalCommand);
     }
 
     private void registerListeners() {
         registerListener(new RequestsReminder(), this);
+        registerListener(new ArrivalListener(), this);
     }
 
     private void registerCommand(String name, CommandExecutor executor) {
