@@ -7,6 +7,7 @@ import nl.ashlyn.core.utils.Logger;
 import com.google.gson.JsonArray;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
@@ -91,6 +92,7 @@ public class WebServer {
         if (rosterTask != null) rosterTask.cancel();
         if (server != null) server.stop(0);
         if (executor != null) executor.shutdownNow();
+        if (activity != null) HandlerList.unregisterAll(activity);
     }
 
     private static boolean preflight(HttpExchange exchange, String allowedOrigin) throws IOException {

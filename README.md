@@ -10,6 +10,10 @@
 
 Core is a comprehensive Spigot/Paper plugin designed specifically for the AshlynSMP server.
 
+## Reloading
+
+`/corereload` (leaders only) reloads `config.yml` and restarts the web API, so changes work without restarting the server. The activity feed on the website starts empty again after a reload.
+
 ## Web API
 
 Core can serve a small API for the AshlynSMP website. Turn it on in `config.yml`:

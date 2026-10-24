@@ -4,6 +4,7 @@ import nl.ashlyn.core.commands.ActCommand;
 import nl.ashlyn.core.commands.ArrivalCommand;
 import nl.ashlyn.core.commands.EventCommand;
 import nl.ashlyn.core.commands.PluginsCommand;
+import nl.ashlyn.core.commands.ReloadCommand;
 import nl.ashlyn.core.commands.RequestsCommand;
 import nl.ashlyn.core.commands.WrappedCommand;
 import nl.ashlyn.core.listeners.ArrivalListener;
@@ -53,6 +54,17 @@ public final class Core extends JavaPlugin {
     }
 
     /**
+     * Reload config.yml and restart the web API with the new settings
+     */
+    public void reload() {
+        reloadConfig();
+        if (webServer != null) webServer.stop();
+        webServer = new WebServer(this);
+        webServer.start();
+        Logger.logCore("Reloaded config and web API");
+    }
+
+    /**
      * Get the instance of the Core plugin
      * @return Core instance
      */
@@ -71,6 +83,7 @@ public final class Core extends JavaPlugin {
 
     private void registerCommands() {
         registerCommand("ashlynplugins", new PluginsCommand());
+        registerCommand("corereload", new ReloadCommand());
         EventCommand eventCommand = new EventCommand();
         registerCommand("event", eventCommand);
         getCommand("event").setTabCompleter(eventCommand);

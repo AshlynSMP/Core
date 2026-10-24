@@ -8,6 +8,9 @@ commands:
     ashlynplugins:
         description: Bekijk alle AshlynSMP plugins die geïnstalleerd zijn op de server.
         usage: /ashlynplugins
+    corereload:
+        description: Herlaad de config van Core en start de web API opnieuw.
+        usage: /corereload
     act:
         description: Bekijk de huidige act of zet het verhaal verder.
         usage: /act [nummer] [titel] | /act info [nummer] <tekst>
