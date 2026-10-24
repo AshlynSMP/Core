@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -111,6 +112,7 @@ public class Arrival {
         setArrived(player.getUniqueId(), true);
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0, false, false, false));
         sendTitle(player);
+        player.playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 1, 1);
         return true;
     }
 
