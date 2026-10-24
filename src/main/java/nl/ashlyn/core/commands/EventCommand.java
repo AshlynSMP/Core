@@ -152,7 +152,6 @@ public class EventCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    // Swaps one event for another (or removes it when replacement is null) and saves
     private void replace(ServerEvent event, ServerEvent replacement) {
         List<ServerEvent> events = new ArrayList<>(CoreConfig.getEvents());
         int index = events.indexOf(event);

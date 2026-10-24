@@ -37,7 +37,6 @@ public class ActCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("info")) {
-            // Optioneel een actnummer als eerste woord, anders de huidige act
             int target = CoreConfig.getAct();
             int from = 1;
             if (args.length > 2 && args[1].matches("\\d+")) {

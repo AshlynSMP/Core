@@ -33,6 +33,14 @@ Before the season starts, the website shows a form where players can ask to be w
 
 Close the form with `web.whitelist-requests.open: false`; the website then hides it. Each visitor can send 5 requests per 10 minutes, and at most `max-pending` requests can be open at once.
 
+## Wrapped
+
+Core keeps track of season stats Minecraft doesn't store itself, for the end of season recap on the website: time per dimension, which hours people play, days played, longest session and advancements. They're kept in `plugins/Core/wrapped.yml`.
+
+- `/wrapped` - show how many players are tracked
+- `/wrapped export` - write `plugins/Core/wrapped.json` for the website, with these stats plus each player's Minecraft statistics (playtime, deaths, kills, distance on foot, jumps, blocks mined), and the story and event timeline
+- `/wrapped reset confirm` - start counting from zero, for just before the season starts
+
 ## Story
 
 The website shows which act of the season the story is in. Later act titles stay hidden until a leader reveals them:

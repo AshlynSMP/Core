@@ -17,3 +17,6 @@ commands:
     aanvragen:
         description: Bekijk en behandel whitelist-aanvragen van de website.
         usage: /aanvragen [accept | deny <naam>]
+    wrapped:
+        description: Beheer Ashlyn Wrapped, het seizoensoverzicht op de website.
+        usage: /wrapped [export | reset confirm]

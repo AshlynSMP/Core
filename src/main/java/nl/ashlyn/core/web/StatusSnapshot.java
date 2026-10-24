@@ -111,7 +111,7 @@ public class StatusSnapshot {
         };
     }
 
-    private static JsonObject buildStory() {
+    public static JsonObject buildStory() {
         JsonObject story = new JsonObject();
         int act = CoreConfig.getAct();
         story.addProperty("act", act);
@@ -141,7 +141,7 @@ public class StatusSnapshot {
         return event;
     }
 
-    private static JsonArray buildTimeline() {
+    public static JsonArray buildTimeline() {
         JsonArray timeline = new JsonArray();
         List<ServerEvent> events = CoreConfig.getEvents();
         for (int i = events.size() - 1; i >= 0; i--) {

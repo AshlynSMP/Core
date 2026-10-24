@@ -21,7 +21,6 @@ public class RequestsReminder implements Listener {
         Player player = event.getPlayer();
         if (!player.isOp() && !CoreConfig.isLeader(player.getName())) return;
 
-        // A moment later, so the message doesn't drown in the join spam
         Core.getInstance().getServer().getScheduler().runTaskLater(Core.getInstance(), () -> {
             int open = WhitelistRequests.getRequests().size();
             if (open == 0 || !player.isOnline()) return;

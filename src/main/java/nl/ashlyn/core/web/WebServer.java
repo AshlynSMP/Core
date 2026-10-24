@@ -50,7 +50,6 @@ public class WebServer {
         int refreshSeconds = Math.max(1, config.getInt("web.refresh-seconds", 5));
         int rosterRefreshSeconds = Math.max(10, config.getInt("web.roster-refresh-seconds", 60));
 
-        // Without the status endpoint there's nothing to collect, so skip the snapshot work entirely
         if (statusEnabled && showPlayers) {
             activity = new ActivityFeed(config.getInt("web.activity-size", 30));
             plugin.getServer().getPluginManager().registerEvents(activity, plugin);
@@ -94,7 +93,6 @@ public class WebServer {
         if (executor != null) executor.shutdownNow();
     }
 
-    // Adds the CORS headers and answers the browser's preflight request; returns true when it was one
     private static boolean preflight(HttpExchange exchange, String allowedOrigin) throws IOException {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", allowedOrigin);
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");

@@ -4,9 +4,12 @@ import nl.ashlyn.core.commands.ActCommand;
 import nl.ashlyn.core.commands.EventCommand;
 import nl.ashlyn.core.commands.PluginsCommand;
 import nl.ashlyn.core.commands.RequestsCommand;
+import nl.ashlyn.core.commands.WrappedCommand;
 import nl.ashlyn.core.listeners.RequestsReminder;
 import nl.ashlyn.core.utils.Logger;
 import nl.ashlyn.core.web.WebServer;
+import nl.ashlyn.core.wrapped.SeasonTracker;
+import nl.ashlyn.core.wrapped.WrappedExporter;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
@@ -17,12 +20,15 @@ public final class Core extends JavaPlugin {
 
     private static Core instance;
     private WebServer webServer;
+    private SeasonTracker seasonTracker;
 
     @Override
     public void onEnable() {
         instance = this;
 
         saveDefaultConfig();
+        seasonTracker = new SeasonTracker(this);
+        seasonTracker.start();
         registerCommands();
         registerListeners();
 
@@ -37,6 +43,7 @@ public final class Core extends JavaPlugin {
     @Override
     public void onDisable() {
         if (webServer != null) webServer.stop();
+        if (seasonTracker != null) seasonTracker.stop();
 
         Logger.logCore("+=========================================+");
         Logger.logCore("Ashlyn Core Disabled! (Build: v" + getDescription().getVersion() + ")");
@@ -69,6 +76,9 @@ public final class Core extends JavaPlugin {
         RequestsCommand requestsCommand = new RequestsCommand();
         registerCommand("aanvragen", requestsCommand);
         getCommand("aanvragen").setTabCompleter(requestsCommand);
+        WrappedCommand wrappedCommand = new WrappedCommand(seasonTracker, new WrappedExporter(this, seasonTracker));
+        registerCommand("wrapped", wrappedCommand);
+        getCommand("wrapped").setTabCompleter(wrappedCommand);
     }
 
     private void registerListeners() {

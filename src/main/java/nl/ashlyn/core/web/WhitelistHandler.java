@@ -110,7 +110,6 @@ public class WhitelistHandler {
         }
     }
 
-    // Behind a Cloudflare Tunnel every request comes from the tunnel, the real visitor is in this header
     private static String clientIp(HttpExchange exchange) {
         String forwarded = exchange.getRequestHeaders().getFirst("CF-Connecting-IP");
         return forwarded != null ? forwarded : exchange.getRemoteAddress().getAddress().getHostAddress();
