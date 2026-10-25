@@ -26,6 +26,10 @@ public class StatusSnapshot {
 
     public static JsonObject build(boolean showPlayers, JsonArray roster, ActivityFeed activity) {
         JsonObject json = new JsonObject();
+        if (CoreConfig.isMaintenance()) {
+            json.add("maintenance", buildMaintenance());
+            return json;
+        }
         json.addProperty("online", true);
         json.addProperty("version", Bukkit.getBukkitVersion().split("-")[0]);
         json.addProperty("updated", System.currentTimeMillis());
