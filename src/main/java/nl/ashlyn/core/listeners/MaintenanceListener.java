@@ -10,9 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Created by Ashlyn on 25/10/2026
  *
@@ -32,10 +29,6 @@ public class MaintenanceListener implements Listener {
     @EventHandler
     public void onPing(ServerListPingEvent event) {
         if (!CoreConfig.isMaintenance()) return;
-        String[] lines = event.getMotd().split("\n", 2);
-        if (lines.length < 2) return;
-        Matcher prefix = Pattern.compile("^(?:\\s|§.)*").matcher(lines[1]);
-        prefix.find();
-        event.setMotd(lines[0] + "\n" + prefix.group() + " ".repeat(7) + ChatColor.RED + "In onderhoud");
+        event.setMotd(" ".repeat(24) + ChatColor.RED + ChatColor.BOLD + "In onderhoud");
     }
 }
