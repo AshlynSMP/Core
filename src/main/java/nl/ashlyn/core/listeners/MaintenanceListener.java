@@ -10,6 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
+import java.util.Iterator;
+
 /**
  * Created by Ashlyn on 25/10/2026
  *
@@ -30,5 +32,11 @@ public class MaintenanceListener implements Listener {
     public void onPing(ServerListPingEvent event) {
         if (!CoreConfig.isMaintenance()) return;
         event.setMotd(ChatColor.RED.toString() + ChatColor.BOLD + "In onderhoud");
+        event.setMaxPlayers(0);
+        Iterator<Player> players = event.iterator();
+        while (players.hasNext()) {
+            players.next();
+            players.remove();
+        }
     }
 }
