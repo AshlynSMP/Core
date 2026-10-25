@@ -29,6 +29,6 @@ public class MaintenanceListener implements Listener {
     @EventHandler
     public void onPing(ServerListPingEvent event) {
         if (!CoreConfig.isMaintenance()) return;
-        event.setMotd(" ".repeat(24) + ChatColor.RED + ChatColor.BOLD + "In onderhoud");
+        event.setMotd(ChatColor.RED.toString() + ChatColor.BOLD + "In onderhoud");
     }
 }
