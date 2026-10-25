@@ -26,3 +26,6 @@ commands:
     aankomst:
         description: Regel de aankomst, het hok en het verspreiden over het bos.
         usage: /aankomst [aan | uit | hok | bos <straal> [afstand] | start | naam <speler> <naam> | papier <speler> | reset <speler>]
+    onderhoud:
+        description: Zet de server in onderhoud, dan kunnen alleen de leiders joinen.
+        usage: /onderhoud [aan [reden] | uit]

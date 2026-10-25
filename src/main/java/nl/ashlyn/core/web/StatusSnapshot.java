@@ -34,6 +34,7 @@ public class StatusSnapshot {
         json.add("roster", showPlayers ? roster : new JsonArray());
         json.add("activity", activity != null ? activity.toJson() : new JsonArray());
         json.addProperty("lore", CoreConfig.isLoreEnabled());
+        json.add("maintenance", buildMaintenance());
         json.add("story", buildStory());
         json.add("event", buildEvent());
         json.add("timeline", buildTimeline());
@@ -109,6 +110,13 @@ public class StatusSnapshot {
             case THE_END -> "end";
             default -> "overworld";
         };
+    }
+
+    private static JsonObject buildMaintenance() {
+        JsonObject maintenance = new JsonObject();
+        maintenance.addProperty("enabled", CoreConfig.isMaintenance());
+        maintenance.addProperty("reason", CoreConfig.getMaintenanceReason());
+        return maintenance;
     }
 
     public static JsonObject buildStory() {

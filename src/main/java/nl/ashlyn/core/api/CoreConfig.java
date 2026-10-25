@@ -357,6 +357,39 @@ public class CoreConfig {
     }
 
     /**
+     * Check if the server is in maintenance, only leaders and ops can join then
+     * @return true if maintenance is on, false otherwise
+     */
+    public static boolean isMaintenance() {
+        return Core.getCoreConfig().getBoolean("maintenance.enabled", false);
+    }
+
+    /**
+     * Turn maintenance on or off
+     * @param enabled true to turn it on, false to turn it off
+     */
+    public static void setMaintenance(boolean enabled) {
+        Core.getCoreConfig().set("maintenance.enabled", enabled);
+    }
+
+    /**
+     * Get the reason players see when they can't join during maintenance
+     * @return The reason, or null if there is none
+     */
+    public static String getMaintenanceReason() {
+        String reason = Core.getCoreConfig().getString("maintenance.reason", "");
+        return reason == null || reason.isBlank() ? null : reason;
+    }
+
+    /**
+     * Set the reason players see when they can't join during maintenance
+     * @param reason The reason, or null for none
+     */
+    public static void setMaintenanceReason(String reason) {
+        Core.getCoreConfig().set("maintenance.reason", reason == null ? "" : reason);
+    }
+
+    /**
      * Save the configuration to disk
      */
     public static void saveConfig() {
