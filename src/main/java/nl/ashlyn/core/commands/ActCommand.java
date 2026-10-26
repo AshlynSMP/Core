@@ -1,7 +1,11 @@
 package nl.ashlyn.core.commands;
 
 import nl.ashlyn.core.api.CoreConfig;
+import nl.ashlyn.core.listeners.FinaleListener;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,6 +22,7 @@ import java.util.List;
  *   /act                    show the current act
  *   /act <nummer> [titel]   go to an act, optionally (re)naming it
  *   /act info [nummer] <tekst>  set the short description of an act (the current one by default)
+ *   /act uit|terug <speler>     mark a player as out in the last act, or bring them back
  */
 public class ActCommand implements CommandExecutor {
 
@@ -53,6 +58,27 @@ public class ActCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("uit") || args[0].equalsIgnoreCase("terug")) {
+            boolean out = args[0].equalsIgnoreCase("uit");
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.RED + "Gebruik: /act " + args[0].toLowerCase() + " <speler>");
+                return true;
+            }
+            OfflinePlayer target = findPlayer(args[1]);
+            if (target == null) {
+                sender.sendMessage(ChatColor.RED + "Speler " + args[1] + " niet gevonden.");
+                return true;
+            }
+            if (out) CoreConfig.setOut(target.getUniqueId(), System.currentTimeMillis());
+            else CoreConfig.removeOut(target.getUniqueId());
+            CoreConfig.saveConfig();
+            if (target.getPlayer() != null && CoreConfig.isFinalAct()) {
+                target.getPlayer().setGameMode(out ? GameMode.SPECTATOR : GameMode.SURVIVAL);
+            }
+            sender.sendMessage(ChatColor.GREEN + target.getName() + (out ? " is nu uitgeschakeld." : " doet weer mee."));
+            return true;
+        }
+
         int act;
         try {
             act = Integer.parseInt(args[0]);
@@ -68,6 +94,7 @@ public class ActCommand implements CommandExecutor {
         if (args.length > 1) CoreConfig.setActTitle(act, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
         CoreConfig.setAct(act);
         CoreConfig.saveConfig();
+        FinaleListener.applyHardcore();
 
         List<String> titles = CoreConfig.getActTitles();
         String title = CoreConfig.getActTitle(act);
@@ -76,5 +103,12 @@ public class ActCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.GRAY + "Deze act heeft nog geen titel, de website toont ??? tot je er een geeft met /act " + act + " <titel>.");
         }
         return true;
+    }
+
+    private OfflinePlayer findPlayer(String name) {
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            if (name.equalsIgnoreCase(player.getName())) return player;
+        }
+        return null;
     }
 }

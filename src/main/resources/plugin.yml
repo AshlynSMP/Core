@@ -13,7 +13,7 @@ commands:
         usage: /corereload
     act:
         description: Bekijk de huidige act of zet het verhaal verder.
-        usage: /act [nummer] [titel] | /act info [nummer] <tekst>
+        usage: /act [nummer] [titel] | /act info [nummer] <tekst> | /act uit|terug <speler>
     event:
         description: Bekijk of plan events, de website telt af en houdt een tijdlijn bij.
         usage: /event [list | set <dd-mm-yyyy> <hh:mm> <naam> | in <duur> <naam> | recap <tekst> | clear | remove <naam>]

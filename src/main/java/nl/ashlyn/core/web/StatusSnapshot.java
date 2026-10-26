@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Ashlyn on 23/10/2026
@@ -77,6 +79,7 @@ public class StatusSnapshot {
 
     public static JsonArray buildRoster() {
         JsonArray roster = new JsonArray();
+        Map<UUID, Long> out = CoreConfig.isFinalAct() ? CoreConfig.getOut() : Map.of();
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
             if (player.getName() == null || !player.hasPlayedBefore() && !player.isOnline()) continue;
 
@@ -87,6 +90,8 @@ public class StatusSnapshot {
             p.addProperty("leader", CoreConfig.isLeader(player.getName()));
             p.addProperty("firstPlayed", player.getFirstPlayed());
             p.addProperty("lastSeen", player.isOnline() ? System.currentTimeMillis() : player.getLastPlayed());
+            Long outAt = out.get(player.getUniqueId());
+            if (outAt != null) p.addProperty("out", outAt);
             addStats(p, player);
             roster.add(p);
         }
@@ -128,6 +133,7 @@ public class StatusSnapshot {
         int act = CoreConfig.getAct();
         story.addProperty("act", act);
         story.addProperty("total", CoreConfig.getTotalActs());
+        story.addProperty("final", CoreConfig.isFinalAct());
 
         JsonArray acts = new JsonArray();
         for (int i = 1; i <= act; i++) {

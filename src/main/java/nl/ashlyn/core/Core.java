@@ -9,6 +9,7 @@ import nl.ashlyn.core.commands.ReloadCommand;
 import nl.ashlyn.core.commands.RequestsCommand;
 import nl.ashlyn.core.commands.WrappedCommand;
 import nl.ashlyn.core.listeners.ArrivalListener;
+import nl.ashlyn.core.listeners.FinaleListener;
 import nl.ashlyn.core.listeners.MaintenanceListener;
 import nl.ashlyn.core.listeners.RequestsReminder;
 import nl.ashlyn.core.utils.Logger;
@@ -108,6 +109,7 @@ public final class Core extends JavaPlugin {
         registerListener(new RequestsReminder(), this);
         registerListener(new ArrivalListener(), this);
         registerListener(new MaintenanceListener(), this);
+        registerListener(new FinaleListener(), this);
     }
 
     private void registerCommand(String name, CommandExecutor executor) {

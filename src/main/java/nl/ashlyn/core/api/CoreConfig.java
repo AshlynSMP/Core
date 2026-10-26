@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by Ashlyn on 05/12/2025
@@ -154,6 +155,57 @@ public class CoreConfig {
         while (info.size() < act) info.add("");
         info.set(act - 1, text);
         Core.getCoreConfig().set("story.info", info);
+    }
+
+    /**
+     * Check if the storyline is in its last act
+     * @return true if the current act is the last one
+     */
+    public static boolean isFinalAct() {
+        return getAct() >= getTotalActs();
+    }
+
+    /**
+     * Get the players who are out in the last act
+     * @return Map of player UUID to the epoch milliseconds they went out
+     */
+    public static Map<UUID, Long> getOut() {
+        Map<UUID, Long> out = new LinkedHashMap<>();
+        ConfigurationSection section = Core.getCoreConfig().getConfigurationSection("story.out");
+        if (section == null) return out;
+        for (String key : section.getKeys(false)) {
+            try {
+                out.put(UUID.fromString(key), section.getLong(key));
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Check if a player is out in the last act
+     * @param uuid The player's UUID
+     * @return true if the player is out
+     */
+    public static boolean isOut(UUID uuid) {
+        return Core.getCoreConfig().contains("story.out." + uuid);
+    }
+
+    /**
+     * Mark a player as out in the last act
+     * @param uuid The player's UUID
+     * @param time Epoch milliseconds the player went out
+     */
+    public static void setOut(UUID uuid, long time) {
+        Core.getCoreConfig().set("story.out." + uuid, time);
+    }
+
+    /**
+     * Bring a player back in the last act
+     * @param uuid The player's UUID
+     */
+    public static void removeOut(UUID uuid) {
+        Core.getCoreConfig().set("story.out." + uuid, null);
     }
 
     /**
