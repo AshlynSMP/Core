@@ -119,6 +119,7 @@ public class FinaleListener implements Listener {
         for (PotionEffect effect : player.getActivePotionEffects()) player.removePotionEffect(effect.getType());
         player.setFoodLevel(20);
         player.setGameMode(GameMode.SPECTATOR);
+        player.playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 1, 1);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName() + " times 0 80 30");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName() + " title " + TITLE);
     }
