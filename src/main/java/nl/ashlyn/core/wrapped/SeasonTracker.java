@@ -1,5 +1,6 @@
 package nl.ashlyn.core.wrapped;
 
+import com.google.gson.JsonObject;
 import nl.ashlyn.core.Core;
 import nl.ashlyn.core.api.CoreConfig;
 import nl.ashlyn.core.utils.Logger;
@@ -75,6 +76,24 @@ public class SeasonTracker implements Listener {
             if (s != null) s.longestSessionMinutes = Math.max(s.longestSessionMinutes, minutesSince(start, now));
         });
         return Collections.unmodifiableMap(stats);
+    }
+
+    /**
+     * Get the season stats of one player for the portal
+     * @param uuid The player
+     * @return The stats, or null if the player has none yet
+     */
+    public JsonObject toJson(UUID uuid) {
+        SeasonStats s = getStats().get(uuid);
+        if (s == null) return null;
+        JsonObject json = new JsonObject();
+        JsonObject dimensions = new JsonObject();
+        for (int i = 0; i < SeasonStats.DIMENSIONS.length; i++) dimensions.addProperty(SeasonStats.DIMENSIONS[i], s.dimensionMinutes[i]);
+        json.add("dimensionMinutes", dimensions);
+        json.addProperty("daysPlayed", s.daysPlayed);
+        json.addProperty("longestSessionMinutes", s.longestSessionMinutes);
+        json.addProperty("advancements", s.advancements);
+        return json;
     }
 
     public void reset() {

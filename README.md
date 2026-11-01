@@ -27,6 +27,15 @@ web:
 
 `GET /api/status` returns online players (health, level, dimension, ping and stats), every player that ever joined with their playtime, deaths and kills, the latest joins/leaves/deaths/advancements, lore mode, ceasefire, radio tower status, the world day/time/weather and the installed Ashlyn plugins as JSON. It's refreshed every `refresh-seconds` on the main thread. Set `web.status-enabled: false` to turn this endpoint off; the whitelist requests keep working, and the website then shows the server as offline.
 
+## Player heads
+
+The website gets every player head from Core, so it always shows the skin the server knows:
+
+- `GET /api/head/<uuid>.png` - the face with the hat layer, 128x128
+- `GET /api/body/<uuid>.png` - the whole player from the front, 128x256
+
+Core takes the skin from an online player's profile, or asks Mojang for players who are offline, and draws the images with sharp pixels. Slim arms and old 64x32 skins are handled the way Minecraft does. The images are kept in `plugins/Core/skins/` and drawn again from the latest skin once they're an hour old. Only players who have been on the server get a head. When Core can't be reached, the website falls back to Crafatar.
+
 ## Whitelist requests
 
 Before the season starts, the website shows a form where players can ask to be whitelisted. Requests go to `POST /api/whitelist` and are kept in `plugins/Core/requests.yml` until a leader handles them. Online leaders get a chat message for every new one, and leaders who join later are told how many are waiting. This needs the web API to be on (`web.enabled: true`).
@@ -38,6 +47,38 @@ Before the season starts, the website shows a form where players can ask to be w
 Close the form with `web.whitelist-requests.open: false`; the website then hides it. Each visitor can send 5 requests per 10 minutes, and at most `max-pending` requests can be open at once.
 
 When a request is accepted, the real name from the form is saved in `plugins/Core/names.yml`. Other plugins can read it with `RealNames.get(player)`, which falls back to an open request and then to the Minecraft name.
+
+## Player portal
+
+Players sign in on the website's portal with their Watchdog account and link their Minecraft account to see their stats, sign up for events and, for leaders, handle requests and settings. Turn it on in `config.yml`:
+
+```yaml
+web:
+    portal:
+        enabled: true
+        watchdog-url: 'https://watchdog.ashlyn.nl'
+        client-id: 'ashlyn-portal'
+```
+
+The client needs to exist in Watchdog as an interactive client with PKCE on and the website's `/portal` address as redirect URI. Core swaps the login code for a token itself, because Watchdog doesn't answer the browser directly, and checks every token with Watchdog's `/connect/userinfo`. Links are kept in `plugins/Core/links.yml`.
+
+- `/koppel <code>` - link your account with the code from the portal (codes work for 10 minutes)
+- `/koppel` - show which Watchdog account you're linked to
+- `/koppel uit` - remove your link
+- `/koppel reset <speler>` - remove the link of a player (leaders only)
+
+Ranks and averages come from a table of every player's stats, rebuilt every 5 minutes from the world's stats files and the Wrapped tracker. Who signs up for an event, and who was online while it went on, is kept in `plugins/Core/signups.yml`.
+
+During maintenance (`/onderhoud aan`) only leaders and ops can use the portal; everyone else gets the maintenance screen with the reason. Accounts that aren't linked yet can still get a code, since only leaders can join to type it.
+
+Everything but login needs the Watchdog token as `Authorization: Bearer`:
+
+- `POST /api/portal/login` - swap the login code for a token
+- `GET /api/portal/me` - the player, their stats and ranks, the next event, the current act and who's online
+- `POST` / `DELETE /api/portal/link` - get a link code, or unlink
+- `GET /api/portal/events` - planned and past events
+- `POST /api/portal/rsvp` - `{"time", "going": true | false | null}`
+- `GET /api/portal/admin` and `POST /api/portal/admin/requests`, `/events`, `/settings` - for players linked to a leader or op account
 
 ## Wrapped
 

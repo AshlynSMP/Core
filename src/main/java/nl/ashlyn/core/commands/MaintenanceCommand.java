@@ -41,27 +41,37 @@ public class MaintenanceCommand implements CommandExecutor, TabCompleter {
         switch (args[0].toLowerCase()) {
             case "aan" -> {
                 String reason = args.length > 1 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : null;
-                CoreConfig.setMaintenance(true);
-                CoreConfig.setMaintenanceReason(reason);
-                CoreConfig.saveConfig();
-                int kicked = 0;
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (canJoin(player.getName(), player.isOp())) continue;
-                    player.kickPlayer(kickMessage());
-                    kicked++;
-                }
+                int kicked = set(true, reason);
                 sender.sendMessage(ChatColor.GREEN + "Onderhoud staat nu aan."
                         + (kicked > 0 ? ChatColor.GRAY + " " + (kicked == 1 ? "1 speler is" : kicked + " spelers zijn") + " gekickt." : ""));
             }
             case "uit" -> {
-                CoreConfig.setMaintenance(false);
-                CoreConfig.setMaintenanceReason(null);
-                CoreConfig.saveConfig();
+                set(false, null);
                 sender.sendMessage(ChatColor.GREEN + "Onderhoud staat nu uit, iedereen kan weer joinen.");
             }
             default -> sender.sendMessage(ChatColor.RED + "Gebruik: /onderhoud [aan [reden] | uit]");
         }
         return true;
+    }
+
+    /**
+     * Turn maintenance on or off, and kick everyone who can't stay
+     * @param enabled Whether maintenance is on
+     * @param reason  The reason players see, or null
+     * @return How many players were kicked
+     */
+    public static int set(boolean enabled, String reason) {
+        CoreConfig.setMaintenance(enabled);
+        CoreConfig.setMaintenanceReason(enabled ? reason : null);
+        CoreConfig.saveConfig();
+        if (!enabled) return 0;
+        int kicked = 0;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (canJoin(player.getName(), player.isOp())) continue;
+            player.kickPlayer(kickMessage());
+            kicked++;
+        }
+        return kicked;
     }
 
     /**

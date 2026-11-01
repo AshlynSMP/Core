@@ -32,7 +32,7 @@ public class WrappedExporter {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final String[] ON_FOOT = {
+    static final String[] ON_FOOT = {
             "walk_one_cm", "sprint_one_cm", "crouch_one_cm", "swim_one_cm",
             "walk_on_water_one_cm", "walk_under_water_one_cm", "climb_one_cm"
     };
@@ -117,7 +117,7 @@ public class WrappedExporter {
         return p;
     }
 
-    private static JsonObject readStats(File file) {
+    static JsonObject readStats(File file) {
         if (!file.isFile()) return new JsonObject();
         try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
             JsonElement root = JsonParser.parseReader(reader);
@@ -128,16 +128,16 @@ public class WrappedExporter {
         }
     }
 
-    private static JsonObject section(JsonObject stats, String key) {
+    static JsonObject section(JsonObject stats, String key) {
         return stats.has(key) && stats.get(key).isJsonObject() ? stats.getAsJsonObject(key) : new JsonObject();
     }
 
-    private static long number(JsonObject section, String key) {
+    static long number(JsonObject section, String key) {
         JsonElement value = section.get("minecraft:" + key);
         return value != null && value.isJsonPrimitive() ? value.getAsLong() : 0;
     }
 
-    private static long total(JsonObject section) {
+    static long total(JsonObject section) {
         long sum = 0;
         for (Map.Entry<String, JsonElement> entry : section.entrySet()) {
             if (entry.getValue().isJsonPrimitive()) sum += entry.getValue().getAsLong();

@@ -2,6 +2,7 @@ package nl.ashlyn.core.web;
 
 import nl.ashlyn.core.Core;
 import nl.ashlyn.core.api.CoreConfig;
+import nl.ashlyn.core.api.RealNames;
 import nl.ashlyn.core.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 /**
@@ -67,6 +69,28 @@ public class WhitelistRequests {
 
         notifyLeaders(name, who);
         return Result.OK;
+    }
+
+    /**
+     * Put the player of a request on the whitelist, save their real name and drop the request
+     * The request stays if the Minecraft account can't be found
+     * @param request The request
+     * @return Completes on the main thread with the player's Minecraft name, or null if it failed
+     */
+    public static CompletableFuture<String> accept(Request request) {
+        CompletableFuture<String> result = new CompletableFuture<>();
+        Bukkit.createPlayerProfile(request.name()).update().whenComplete((profile, error) ->
+                Bukkit.getScheduler().runTask(Core.getInstance(), () -> {
+                    if (error != null || profile == null || profile.getUniqueId() == null || profile.getName() == null) {
+                        result.complete(null);
+                        return;
+                    }
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist add " + profile.getName());
+                    if (!request.realName().isEmpty()) RealNames.set(profile.getUniqueId(), request.realName());
+                    remove(request.name());
+                    result.complete(profile.getName());
+                }));
+        return result;
     }
 
     public static void remove(String name) {

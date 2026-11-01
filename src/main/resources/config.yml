@@ -40,3 +40,7 @@ web:
     whitelist-requests:
         open: true
         max-pending: 100
+    portal:
+        enabled: false
+        watchdog-url: 'https://watchdog.ashlyn.nl'
+        client-id: 'ashlyn-portal'

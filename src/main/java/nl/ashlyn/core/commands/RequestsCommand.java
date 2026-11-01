@@ -5,12 +5,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import nl.ashlyn.core.Core;
 import nl.ashlyn.core.api.CoreConfig;
-import nl.ashlyn.core.api.RealNames;
 import nl.ashlyn.core.web.WhitelistRequests;
 import nl.ashlyn.core.web.WhitelistRequests.Request;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -64,17 +61,9 @@ public class RequestsCommand implements CommandExecutor, TabCompleter {
     }
 
     private void accept(CommandSender sender, Request request) {
-        Bukkit.createPlayerProfile(request.name()).update().whenComplete((profile, error) ->
-                Bukkit.getScheduler().runTask(Core.getInstance(), () -> {
-                    if (error != null || profile == null || profile.getUniqueId() == null || profile.getName() == null) {
-                        sender.sendMessage(ChatColor.RED + "Kon " + request.name() + " niet op de whitelist zetten. Bestaat dit Minecraft-account wel?");
-                        return;
-                    }
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist add " + profile.getName());
-                    if (!request.realName().isEmpty()) RealNames.set(profile.getUniqueId(), request.realName());
-                    WhitelistRequests.remove(request.name());
-                    sender.sendMessage(ChatColor.GREEN + profile.getName() + " staat nu op de whitelist.");
-                }));
+        WhitelistRequests.accept(request).thenAccept(name -> sender.sendMessage(name == null
+                ? ChatColor.RED + "Kon " + request.name() + " niet op de whitelist zetten. Bestaat dit Minecraft-account wel?"
+                : ChatColor.GREEN + name + " staat nu op de whitelist."));
     }
 
     @Override

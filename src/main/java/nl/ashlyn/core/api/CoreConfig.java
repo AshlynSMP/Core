@@ -298,6 +298,14 @@ public class CoreConfig {
     }
 
     /**
+     * Open or close the whitelist form on the website
+     * @param open true to take requests
+     */
+    public static void setWhitelistRequestsOpen(boolean open) {
+        Core.getCoreConfig().set("web.whitelist-requests.open", open);
+    }
+
+    /**
      * Get how many whitelist requests can be open at once
      * @return Maximum number of open requests
      */

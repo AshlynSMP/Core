@@ -9,8 +9,8 @@ commands:
         description: Bekijk alle AshlynSMP plugins die geïnstalleerd zijn op de server.
         usage: /ashlynplugins
     corereload:
-        description: Herlaad de config van Core en start de web API opnieuw.
-        usage: /corereload
+        description: Herlaad de config van Core en start de web API opnieuw, of laad met jar de nieuwe Core jar.
+        usage: /corereload [jar]
     act:
         description: Bekijk de huidige act of zet het verhaal verder.
         usage: /act [nummer] [titel] | /act info [nummer] <tekst> | /act uit|terug <speler>
@@ -29,3 +29,6 @@ commands:
     onderhoud:
         description: Zet de server in onderhoud, dan kunnen alleen de leiders joinen.
         usage: /onderhoud [aan [reden] | uit]
+    koppel:
+        description: Koppel je Minecraft-account aan je Watchdog-account voor het spelersportaal.
+        usage: /koppel [code | uit | reset <speler>]

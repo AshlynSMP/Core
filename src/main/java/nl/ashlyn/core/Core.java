@@ -3,14 +3,17 @@ package nl.ashlyn.core;
 import nl.ashlyn.core.commands.ActCommand;
 import nl.ashlyn.core.commands.ArrivalCommand;
 import nl.ashlyn.core.commands.EventCommand;
+import nl.ashlyn.core.commands.LinkCommand;
 import nl.ashlyn.core.commands.MaintenanceCommand;
 import nl.ashlyn.core.commands.PluginsCommand;
 import nl.ashlyn.core.commands.ReloadCommand;
 import nl.ashlyn.core.commands.RequestsCommand;
 import nl.ashlyn.core.commands.WrappedCommand;
 import nl.ashlyn.core.listeners.ArrivalListener;
+import nl.ashlyn.core.listeners.EventAttendance;
 import nl.ashlyn.core.listeners.FinaleListener;
 import nl.ashlyn.core.listeners.MaintenanceListener;
+import nl.ashlyn.core.listeners.ReloadCommandListener;
 import nl.ashlyn.core.listeners.RequestsReminder;
 import nl.ashlyn.core.utils.Logger;
 import nl.ashlyn.core.web.WebServer;
@@ -84,6 +87,14 @@ public final class Core extends JavaPlugin {
         return instance.getConfig();
     }
 
+    /**
+     * Get the season tracker that keeps the Wrapped stats
+     * @return The season tracker
+     */
+    public SeasonTracker getSeasonTracker() {
+        return seasonTracker;
+    }
+
     private void registerCommands() {
         registerCommand("ashlynplugins", new PluginsCommand());
         registerCommand("corereload", new ReloadCommand());
@@ -103,6 +114,9 @@ public final class Core extends JavaPlugin {
         MaintenanceCommand maintenanceCommand = new MaintenanceCommand();
         registerCommand("onderhoud", maintenanceCommand);
         getCommand("onderhoud").setTabCompleter(maintenanceCommand);
+        LinkCommand linkCommand = new LinkCommand();
+        registerCommand("koppel", linkCommand);
+        getCommand("koppel").setTabCompleter(linkCommand);
     }
 
     private void registerListeners() {
@@ -110,6 +124,8 @@ public final class Core extends JavaPlugin {
         registerListener(new ArrivalListener(), this);
         registerListener(new MaintenanceListener(), this);
         registerListener(new FinaleListener(), this);
+        registerListener(new EventAttendance(), this);
+        registerListener(new ReloadCommandListener(), this);
     }
 
     private void registerCommand(String name, CommandExecutor executor) {

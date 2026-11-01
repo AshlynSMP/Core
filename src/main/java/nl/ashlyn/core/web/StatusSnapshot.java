@@ -98,7 +98,7 @@ public class StatusSnapshot {
         return roster;
     }
 
-    private static void addStats(JsonObject json, OfflinePlayer player) {
+    static void addStats(JsonObject json, OfflinePlayer player) {
         json.addProperty("playtimeMinutes", stat(player, Statistic.PLAY_ONE_MINUTE) / 20 / 60);
         json.addProperty("deaths", stat(player, Statistic.DEATHS));
         json.addProperty("mobKills", stat(player, Statistic.MOB_KILLS));
@@ -113,7 +113,7 @@ public class StatusSnapshot {
         }
     }
 
-    private static String dimension(World world) {
+    static String dimension(World world) {
         return switch (world.getEnvironment()) {
             case NETHER -> "nether";
             case THE_END -> "end";
@@ -148,7 +148,7 @@ public class StatusSnapshot {
         return story;
     }
 
-    private static JsonObject buildEvent() {
+    static JsonObject buildEvent() {
         ServerEvent next = CoreConfig.getNextEvent();
         if (next == null) return null;
 

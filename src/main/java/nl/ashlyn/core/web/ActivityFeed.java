@@ -69,11 +69,18 @@ public class ActivityFeed implements Listener {
         return array;
     }
 
+    public JsonArray toJson(String player) {
+        JsonArray array = new JsonArray();
+        events.stream().filter(e -> player.equals(e.get("player").getAsString())).forEach(array::add);
+        return array;
+    }
+
     private JsonObject create(String type, Player player) {
         JsonObject json = new JsonObject();
         json.addProperty("id", nextId++);
         json.addProperty("type", type);
         json.addProperty("player", player.getName());
+        json.addProperty("uuid", player.getUniqueId().toString());
         json.addProperty("time", System.currentTimeMillis());
         return json;
     }
