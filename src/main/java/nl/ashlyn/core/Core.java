@@ -3,6 +3,7 @@ package nl.ashlyn.core;
 import nl.ashlyn.core.commands.ActCommand;
 import nl.ashlyn.core.commands.ArrivalCommand;
 import nl.ashlyn.core.commands.EventCommand;
+import nl.ashlyn.core.commands.LimboCommand;
 import nl.ashlyn.core.commands.LinkCommand;
 import nl.ashlyn.core.commands.MaintenanceCommand;
 import nl.ashlyn.core.commands.PluginsCommand;
@@ -12,6 +13,7 @@ import nl.ashlyn.core.commands.WrappedCommand;
 import nl.ashlyn.core.listeners.ArrivalListener;
 import nl.ashlyn.core.listeners.EventAttendance;
 import nl.ashlyn.core.listeners.FinaleListener;
+import nl.ashlyn.core.listeners.LimboListener;
 import nl.ashlyn.core.listeners.MaintenanceListener;
 import nl.ashlyn.core.listeners.ReloadCommandListener;
 import nl.ashlyn.core.listeners.RequestsReminder;
@@ -117,6 +119,9 @@ public final class Core extends JavaPlugin {
         LinkCommand linkCommand = new LinkCommand();
         registerCommand("koppel", linkCommand);
         getCommand("koppel").setTabCompleter(linkCommand);
+        LimboCommand limboCommand = new LimboCommand();
+        registerCommand("limbo", limboCommand);
+        getCommand("limbo").setTabCompleter(limboCommand);
     }
 
     private void registerListeners() {
@@ -124,6 +129,7 @@ public final class Core extends JavaPlugin {
         registerListener(new ArrivalListener(), this);
         registerListener(new MaintenanceListener(), this);
         registerListener(new FinaleListener(), this);
+        registerListener(new LimboListener(), this);
         registerListener(new EventAttendance(), this);
         registerListener(new ReloadCommandListener(), this);
     }

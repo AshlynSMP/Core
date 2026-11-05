@@ -32,3 +32,6 @@ commands:
     koppel:
         description: Koppel je Minecraft-account aan je Watchdog-account voor het spelersportaal.
         usage: /koppel [code | uit | reset <speler>]
+    limbo:
+        description: Regel de limbo, waar spelers heen gaan als ze doodgaan.
+        usage: /limbo [aan | uit | start | uitgang [straal] | weg <speler>]

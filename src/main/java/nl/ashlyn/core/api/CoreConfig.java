@@ -417,6 +417,83 @@ public class CoreConfig {
     }
 
     /**
+     * Check if players who die go to the limbo before they come back
+     * @return true if the limbo is on, false otherwise
+     */
+    public static boolean isLimboEnabled() {
+        return Core.getCoreConfig().getBoolean("limbo.enabled", false);
+    }
+
+    /**
+     * Turn the limbo on or off
+     * @param enabled true to turn it on, false to turn it off
+     */
+    public static void setLimboEnabled(boolean enabled) {
+        Core.getCoreConfig().set("limbo.enabled", enabled);
+    }
+
+    /**
+     * Get the place where players end up after they die
+     * @return The location, or null if it is not set or its world is not loaded
+     */
+    public static Location getLimboStart() {
+        return getLocation("limbo.start");
+    }
+
+    /**
+     * Set the place where players end up after they die
+     * @param location The location
+     */
+    public static void setLimboStart(Location location) {
+        setLocation("limbo.start", location);
+    }
+
+    /**
+     * Get the place players have to reach to leave the limbo
+     * @return The location, or null if it is not set or its world is not loaded
+     */
+    public static Location getLimboExit() {
+        return getLocation("limbo.exit");
+    }
+
+    /**
+     * Set the place players have to reach to leave the limbo
+     * @param location The location
+     * @param radius   How close players have to get
+     */
+    public static void setLimboExit(Location location, int radius) {
+        setLocation("limbo.exit", location);
+        Core.getCoreConfig().set("limbo.exit.radius", radius);
+    }
+
+    /**
+     * Get how close players have to get to the limbo exit
+     * @return Radius in blocks
+     */
+    public static int getLimboExitRadius() {
+        return Math.max(1, Core.getCoreConfig().getInt("limbo.exit.radius", 2));
+    }
+
+    private static Location getLocation(String path) {
+        ConfigurationSection section = Core.getCoreConfig().getConfigurationSection(path);
+        if (section == null) return null;
+        World world = Bukkit.getWorld(section.getString("world", ""));
+        if (world == null) return null;
+        return new Location(world, section.getDouble("x"), section.getDouble("y"), section.getDouble("z"),
+                (float) section.getDouble("yaw"), (float) section.getDouble("pitch"));
+    }
+
+    private static void setLocation(String path, Location location) {
+        FileConfiguration config = Core.getCoreConfig();
+        config.set(path + ".world", location.getWorld().getName());
+        config.set(path + ".x", location.getX());
+        config.set(path + ".y", location.getY());
+        config.set(path + ".z", location.getZ());
+        config.set(path + ".yaw", location.getYaw());
+        config.set(path + ".pitch", location.getPitch());
+    }
+
+    /**
      * Check if the server is in maintenance, only leaders and ops can join then
      * @return true if maintenance is on, false otherwise
      */

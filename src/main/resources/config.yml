@@ -22,6 +22,9 @@ arrival:
     enabled: false
     started: false
 
+limbo:
+    enabled: false
+
 event:
     timezone: 'Europe/Amsterdam'
     live-hours: 3
