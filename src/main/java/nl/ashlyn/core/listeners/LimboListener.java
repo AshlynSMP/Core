@@ -37,10 +37,11 @@ public class LimboListener implements Listener {
         event.setRespawnLocation(start);
         Core plugin = Core.getInstance();
         plugin.getServer().getScheduler().runTask(plugin, () -> {
-            if (player.isOnline()) Limbo.enter(player);
+            if (!player.isOnline()) return;
+            Limbo.enter(player);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0, false, false, false));
+            player.playSound(player.getLocation(), Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 1, 0.6f);
         });
-        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0, false, false, false));
-        player.playSound(start, Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 1, 0.6f);
     }
 
     @EventHandler
