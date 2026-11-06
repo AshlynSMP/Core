@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
  * Created by Ashlyn on 06/11/2026
  *
  * Draws a particle trail from the limbo start to the limbo exit so players in the limbo know where to walk.
- * The trail is a line of soul fire flames at foot height, with a denser pulse running along it towards the exit, so the direction is clear.
+ * The trail is a line of sculk souls at foot height, with a denser pulse running along it towards the exit, so the direction is clear.
  * Only players in the limbo see it, and only the part of it near them.
  */
 public class LimboTrail {
@@ -66,6 +66,6 @@ public class LimboTrail {
     private static void show(Player player, Vector from, Vector direction, double distance, Vector eye, Location start) {
         Vector point = from.clone().add(direction.clone().multiply(distance));
         if (point.distanceSquared(eye) > VIEW_DISTANCE * VIEW_DISTANCE) return;
-        player.spawnParticle(Particle.SOUL_FIRE_FLAME, point.toLocation(start.getWorld()), 1, 0, 0, 0, 0);
+        player.spawnParticle(Particle.SCULK_SOUL, point.toLocation(start.getWorld()), 1, 0, 0, 0, 0);
     }
 }
