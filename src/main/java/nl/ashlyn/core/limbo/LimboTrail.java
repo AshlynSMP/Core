@@ -20,7 +20,7 @@ public class LimboTrail {
 
     private static final long PERIOD_TICKS = 10L;
     private static final int LINE_EVERY = 4;
-    private static final double SPACING = 2.0;
+    private static final double SPACING = 0.4;
     private static final double HEIGHT = 0.15;
     private static final double VIEW_DISTANCE = 24;
     private static final double PULSE_STEP = 1.0;
