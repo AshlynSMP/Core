@@ -417,6 +417,32 @@ public class CoreConfig {
     }
 
     /**
+     * Get the place players walk to after they land in the forest, the arrival trail leads there
+     * @return The location, or null if it is not set or its world is not loaded
+     */
+    public static Location getArrivalTarget() {
+        return getLocation("arrival.target");
+    }
+
+    /**
+     * Set the place players walk to after they land in the forest
+     * @param location The location
+     * @param radius   How close players have to get before the trail is gone
+     */
+    public static void setArrivalTarget(Location location, int radius) {
+        setLocation("arrival.target", location);
+        Core.getCoreConfig().set("arrival.target.radius", radius);
+    }
+
+    /**
+     * Get how close players have to get to the arrival target before their trail is gone
+     * @return Radius in blocks
+     */
+    public static int getArrivalTargetRadius() {
+        return Math.max(1, Core.getCoreConfig().getInt("arrival.target.radius", 5));
+    }
+
+    /**
      * Check if players who die go to the limbo before they come back
      * @return true if the limbo is on, false otherwise
      */

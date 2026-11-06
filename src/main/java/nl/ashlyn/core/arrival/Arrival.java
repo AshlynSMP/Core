@@ -43,7 +43,7 @@ public class Arrival {
     private static final Random RANDOM = new Random();
     private static final int ATTEMPTS = 300;
     private static final long TICKS_BETWEEN = 2L;
-    private static final long NIGHT = 14000L;
+    private static final long DAY = 1000L;
     private static final String TITLE = "{\"text\":\"幕\uDAC0\uDC00\uDAC0\uDC00\uDAC0\uDC00\uDAFF\uDFFF壱\",\"shadow_color\":false}";
     private static final Set<Material> UNSAFE = Set.of(Material.MAGMA_BLOCK, Material.CACTUS, Material.CAMPFIRE,
             Material.SOUL_CAMPFIRE, Material.POWDER_SNOW, Material.POINTED_DRIPSTONE);
@@ -90,7 +90,7 @@ public class Arrival {
 
     public static int start() {
         Location center = CoreConfig.getForestCenter();
-        if (center != null) center.getWorld().setTime(NIGHT);
+        if (center != null) center.getWorld().setTime(DAY);
         List<Player> players = waiting();
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
@@ -113,7 +113,9 @@ public class Arrival {
 
         player.teleport(spot);
         setArrived(player.getUniqueId(), true);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0, false, false, false));
+        ArrivalTrail.begin(player);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0, false, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 100, 0, false, false, false));
         sendTitle(player);
         player.playSound(player.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN, 1, 1);
         return true;

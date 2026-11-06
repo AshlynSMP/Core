@@ -3,6 +3,7 @@ package nl.ashlyn.core.commands;
 import nl.ashlyn.core.api.CoreConfig;
 import nl.ashlyn.core.api.RealNames;
 import nl.ashlyn.core.arrival.Arrival;
+import nl.ashlyn.core.arrival.ArrivalTrail;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,14 +25,15 @@ import java.util.List;
  *   /aankomst aan | uit                turn the arrival on or off
  *   /aankomst hok                      set the hok at your position
  *   /aankomst bos <straal> [afstand]   set the forest center at your position
- *   /aankomst start                    spread everyone in the hok over the forest
+ *   /aankomst doel [straal]            set the place the forest trail leads to at your position
+ *   /aankomst start                   spread everyone in the hok over the forest
  *   /aankomst naam <speler> <naam>     set the real name of a player
  *   /aankomst papier <speler>          give a player a new name paper
  *   /aankomst reset <speler>           let a player go through the arrival again
  */
 public class ArrivalCommand implements CommandExecutor, TabCompleter {
 
-    private static final List<String> SUBCOMMANDS = List.of("aan", "uit", "hok", "bos", "start", "naam", "papier", "reset");
+    private static final List<String> SUBCOMMANDS = List.of("aan", "uit", "hok", "bos", "doel", "start", "naam", "papier", "reset");
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -62,6 +64,7 @@ public class ArrivalCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.GREEN + "Het hok staat nu op jouw plek.");
             }
             case "bos" -> forest(sender, args);
+            case "doel" -> target(sender, args);
             case "start" -> start(sender);
             case "naam" -> {
                 if (args.length < 3) {
@@ -93,6 +96,7 @@ public class ArrivalCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 Arrival.setArrived(target.getUniqueId(), false);
+                ArrivalTrail.end(target.getUniqueId());
                 if (target instanceof Player online) Arrival.sendToHok(online);
                 sender.sendMessage(ChatColor.GREEN + target.getName() + " gaat opnieuw door de aankomst.");
             }
@@ -125,6 +129,28 @@ public class ArrivalCommand implements CommandExecutor, TabCompleter {
                 + distance + " blokken tussen spelers.");
     }
 
+    private void target(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(ChatColor.RED + "Dit kan alleen in de game.");
+            return;
+        }
+        int radius;
+        try {
+            radius = args.length > 1 ? Integer.parseInt(args[1]) : CoreConfig.getArrivalTargetRadius();
+        } catch (NumberFormatException e) {
+            sender.sendMessage(ChatColor.RED + "Gebruik: /aankomst doel [straal]");
+            return;
+        }
+        if (radius < 1) {
+            sender.sendMessage(ChatColor.RED + "De straal moet minstens 1 zijn.");
+            return;
+        }
+        CoreConfig.setArrivalTarget(player.getLocation(), radius);
+        CoreConfig.saveConfig();
+        sender.sendMessage(ChatColor.GREEN + "Het doel staat nu op jouw plek. Spelers die in het bos landen krijgen een spoor hierheen,"
+                + " dat weg is zodra ze binnen " + radius + " blokken zijn.");
+    }
+
     private void start(CommandSender sender) {
         if (CoreConfig.getHok() == null || CoreConfig.getForestCenter() == null) {
             sender.sendMessage(ChatColor.RED + "Zet eerst het hok en het bos met /aankomst hok en /aankomst bos.");
@@ -148,6 +174,10 @@ public class ArrivalCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(ChatColor.GRAY + "Bos: " + ChatColor.WHITE + (forest == null ? "niet gezet"
                 : forest.getWorld().getName() + " " + forest.getBlockX() + ", " + forest.getBlockZ()
                 + ChatColor.GRAY + " straal " + CoreConfig.getForestRadius() + ", afstand " + CoreConfig.getForestMinDistance()));
+        Location target = CoreConfig.getArrivalTarget();
+        sender.sendMessage(ChatColor.GRAY + "Doel: " + ChatColor.WHITE + (target == null ? "niet gezet"
+                : target.getWorld().getName() + " " + target.getBlockX() + ", " + target.getBlockY() + ", " + target.getBlockZ()
+                + ChatColor.GRAY + " straal " + CoreConfig.getArrivalTargetRadius()));
         sender.sendMessage(ChatColor.GRAY + "In het hok: " + ChatColor.WHITE + Arrival.waiting().size());
     }
 
