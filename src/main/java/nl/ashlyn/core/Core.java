@@ -10,6 +10,7 @@ import nl.ashlyn.core.commands.PluginsCommand;
 import nl.ashlyn.core.commands.ReloadCommand;
 import nl.ashlyn.core.commands.RequestsCommand;
 import nl.ashlyn.core.commands.WrappedCommand;
+import nl.ashlyn.core.limbo.LimboTrail;
 import nl.ashlyn.core.listeners.ArrivalListener;
 import nl.ashlyn.core.listeners.EventAttendance;
 import nl.ashlyn.core.listeners.FinaleListener;
@@ -32,6 +33,7 @@ public final class Core extends JavaPlugin {
     private static Core instance;
     private WebServer webServer;
     private SeasonTracker seasonTracker;
+    private LimboTrail limboTrail;
 
     @Override
     public void onEnable() {
@@ -42,6 +44,8 @@ public final class Core extends JavaPlugin {
         seasonTracker.start();
         registerCommands();
         registerListeners();
+        limboTrail = new LimboTrail();
+        limboTrail.start();
 
         webServer = new WebServer(this);
         webServer.start();
@@ -55,6 +59,7 @@ public final class Core extends JavaPlugin {
     public void onDisable() {
         if (webServer != null) webServer.stop();
         if (seasonTracker != null) seasonTracker.stop();
+        if (limboTrail != null) limboTrail.stop();
 
         Logger.logCore("+=========================================+");
         Logger.logCore("Ashlyn Core Disabled! (Build: v" + getDescription().getVersion() + ")");
