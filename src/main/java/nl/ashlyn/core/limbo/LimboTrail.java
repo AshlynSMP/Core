@@ -13,20 +13,18 @@ import org.bukkit.util.Vector;
  * Created by Ashlyn on 06/11/2026
  *
  * Draws a particle trail from the limbo start to the limbo exit so players in the limbo know where to walk.
- * The trail is a line of sculk souls at foot height, with a denser pulse running along it towards the exit, so the direction is clear.
+ * The trail is a line of sculk souls at foot height, one on every spot at the same time, then a pause before the next ones.
  * Only players in the limbo see it, and only the part of it near them.
  */
 public class LimboTrail {
 
-    private static final long PERIOD_TICKS = 5L;
+    /** One sculk soul on every spot, then it fades out and there is about a second of nothing before the next one. */
+    private static final long PERIOD_TICKS = 40L;
     private static final double SPACING = 1;
     private static final double HEIGHT = 0.15;
     private static final double VIEW_DISTANCE = 24;
-    private static final double PULSE_STEP = 1.0;
-    private static final double PULSE_LENGTH = 2.0;
 
     private BukkitTask task;
-    private long runs;
 
     public void start() {
         Core plugin = Core.getInstance();
@@ -39,7 +37,6 @@ public class LimboTrail {
     }
 
     private void draw() {
-        runs++;
         if (!CoreConfig.isLimboEnabled() || Limbo.count() == 0) return;
         Location start = CoreConfig.getLimboStart();
         Location exit = CoreConfig.getLimboExit();
@@ -50,16 +47,12 @@ public class LimboTrail {
         double length = path.length();
         if (length < SPACING) return;
         Vector direction = path.clone().multiply(1 / length);
-        double pulse = (runs * PULSE_STEP) % length;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.getWorld().equals(start.getWorld()) || !Limbo.isIn(player.getUniqueId())) continue;
             Vector eye = player.getLocation().toVector();
 
             for (double d = 0; d <= length; d += SPACING) show(player, from, direction, d, eye, start);
-            for (double d = pulse; d <= Math.min(length, pulse + PULSE_LENGTH); d += SPACING / 2) {
-                show(player, from, direction, d, eye, start);
-            }
         }
     }
 
