@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 public class LimboTrail {
 
     private static final long PERIOD_TICKS = 5L;
-    private static final double SPACING = 0.7;
+    private static final double SPACING = 1;
     private static final double HEIGHT = 0.15;
     private static final double VIEW_DISTANCE = 24;
     private static final double PULSE_STEP = 1.0;
