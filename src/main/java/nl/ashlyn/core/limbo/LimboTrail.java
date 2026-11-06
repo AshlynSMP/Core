@@ -3,7 +3,6 @@ package nl.ashlyn.core.limbo;
 import nl.ashlyn.core.Core;
 import nl.ashlyn.core.api.CoreConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -14,19 +13,17 @@ import org.bukkit.util.Vector;
  * Created by Ashlyn on 06/11/2026
  *
  * Draws a particle trail from the limbo start to the limbo exit so players in the limbo know where to walk.
- * The trail is a faint line with a brighter pulse running along it towards the exit, so the direction is clear.
+ * The trail is a sparse line of end rod particles at foot height, with a single particle running along it towards the exit, so the direction is clear.
  * Only players in the limbo see it, and only the part of it near them.
  */
 public class LimboTrail {
 
-    private static final long PERIOD_TICKS = 5L;
-    private static final double SPACING = 1.0;
-    private static final double HEIGHT = 1.0;
-    private static final double VIEW_DISTANCE = 32;
+    private static final long PERIOD_TICKS = 10L;
+    private static final int LINE_EVERY = 4;
+    private static final double SPACING = 2.0;
+    private static final double HEIGHT = 0.15;
+    private static final double VIEW_DISTANCE = 24;
     private static final double PULSE_STEP = 1.0;
-    private static final double PULSE_LENGTH = 2.0;
-    private static final Particle.DustOptions LINE = new Particle.DustOptions(Color.fromRGB(0xFFFFFF), 0.8f);
-    private static final Particle.DustOptions PULSE = new Particle.DustOptions(Color.fromRGB(0xFFFFFF), 1.4f);
 
     private BukkitTask task;
     private long runs;
@@ -59,17 +56,16 @@ public class LimboTrail {
             if (!player.getWorld().equals(start.getWorld()) || !Limbo.isIn(player.getUniqueId())) continue;
             Vector eye = player.getLocation().toVector();
 
-            for (double d = 0; d <= length; d += SPACING) {
-                Vector point = from.clone().add(direction.clone().multiply(d));
-                if (point.distanceSquared(eye) > VIEW_DISTANCE * VIEW_DISTANCE) continue;
-                player.spawnParticle(Particle.DUST, point.toLocation(start.getWorld()), 1, 0, 0, 0, 0, LINE);
+            if (runs % LINE_EVERY == 0) {
+                for (double d = 0; d <= length; d += SPACING) show(player, from, direction, d, eye, start);
             }
-
-            for (double d = pulse; d <= Math.min(length, pulse + PULSE_LENGTH); d += SPACING / 2) {
-                Vector point = from.clone().add(direction.clone().multiply(d));
-                if (point.distanceSquared(eye) > VIEW_DISTANCE * VIEW_DISTANCE) continue;
-                player.spawnParticle(Particle.DUST, point.toLocation(start.getWorld()), 1, 0, 0, 0, 0, PULSE);
-            }
+            show(player, from, direction, pulse, eye, start);
         }
+    }
+
+    private static void show(Player player, Vector from, Vector direction, double distance, Vector eye, Location start) {
+        Vector point = from.clone().add(direction.clone().multiply(distance));
+        if (point.distanceSquared(eye) > VIEW_DISTANCE * VIEW_DISTANCE) return;
+        player.spawnParticle(Particle.END_ROD, point.toLocation(start.getWorld()), 1, 0, 0, 0, 0);
     }
 }
