@@ -4,14 +4,7 @@ import nl.ashlyn.core.Core;
 import nl.ashlyn.core.api.CoreConfig;
 import nl.ashlyn.core.api.RealNames;
 import nl.ashlyn.core.utils.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.HeightMap;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.Tag;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -34,7 +27,8 @@ import java.util.UUID;
  * Created by Ashlyn on 24/10/2026
  *
  * The release arrival. New players get a paper with their real name and wait together in the hok,
- * until a leader spreads them over the forest and they see the Act 1 title from the resource pack.
+ * until a leader spreads them over the forest at night and they see the Act 1 title from the resource pack.
+ * The world stays peaceful until everyone has followed their trail to the arrival target.
  * Who already got there is kept in arrivals.yml.
  * Only touch this from the main thread.
  */
@@ -43,7 +37,7 @@ public class Arrival {
     private static final Random RANDOM = new Random();
     private static final int ATTEMPTS = 300;
     private static final long TICKS_BETWEEN = 2L;
-    private static final long DAY = 1000L;
+    private static final long NIGHT = 14000L;
     private static final String TITLE = "{\"text\":\"幕\uDAC0\uDC00\uDAC0\uDC00\uDAC0\uDC00\uDAFF\uDFFF壱\",\"shadow_color\":false}";
     private static final Set<Material> UNSAFE = Set.of(Material.MAGMA_BLOCK, Material.CACTUS, Material.CAMPFIRE,
             Material.SOUL_CAMPFIRE, Material.POWDER_SNOW, Material.POINTED_DRIPSTONE);
@@ -90,8 +84,12 @@ public class Arrival {
 
     public static int start() {
         Location center = CoreConfig.getForestCenter();
-        if (center != null) center.getWorld().setTime(DAY);
+        Location target = CoreConfig.getArrivalTarget();
         List<Player> players = waiting();
+        if (center != null) {
+            center.getWorld().setTime(NIGHT);
+            if (!players.isEmpty() && target != null && target.getWorld().equals(center.getWorld())) center.getWorld().setDifficulty(Difficulty.PEACEFUL);
+        }
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             Bukkit.getScheduler().runTaskLater(Core.getInstance(), () -> {

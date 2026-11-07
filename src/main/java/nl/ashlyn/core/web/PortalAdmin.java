@@ -12,6 +12,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Ashlyn on 01/11/2026
  *
  * The leaders' part of the portal. Only for players linked to a leader or op account.
- *   GET  /api/portal/admin           open requests, server settings and who is linked
+ *   GET  /api/portal/admin           open requests, server settings, who is whitelisted and who is linked
  *   POST /api/portal/admin/requests  {"name", "action": "accept" | "deny"}
  *   POST /api/portal/admin/events    {"name", "time"} plan an event
  *   POST /api/portal/admin/settings  {"maintenance", "reason", "whitelistOpen"} each optional
@@ -107,6 +108,14 @@ public class PortalAdmin {
             if (!linkedIds.contains(player.getUniqueId())) unlinked.add(player.getName());
         }
         json.add("unlinked", unlinked);
+
+        JsonArray whitelisted = new JsonArray();
+        Bukkit.getWhitelistedPlayers().stream()
+                .map(OfflinePlayer::getName)
+                .filter(Objects::nonNull)
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .forEach(whitelisted::add);
+        json.add("whitelisted", whitelisted);
         return json;
     }
 

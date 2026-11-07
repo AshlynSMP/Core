@@ -5,6 +5,7 @@ import nl.ashlyn.core.api.CoreConfig;
 import nl.ashlyn.core.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Difficulty;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -29,6 +30,7 @@ import java.util.UUID;
  * The trail follows a walkable path (see ArrivalPath), so it goes around trees and over hills instead of through them.
  * The path is found again from where the player is every 2 seconds, so it keeps up as they walk.
  * Where each trail starts is kept in arrivals.yml under "trail", so it survives logging out and restarts.
+ * The arrival starts in peaceful; once the last player reaches the target the world goes to normal.
  * Only touch this from the main thread.
  */
 public class ArrivalTrail {
@@ -77,7 +79,11 @@ public class ArrivalTrail {
     public static void end(UUID uuid) {
         paths.remove(uuid);
         pathFrom.remove(uuid);
-        if (starts().remove(uuid) != null) save();
+        if (starts().remove(uuid) == null) return;
+        save();
+        if (!starts.isEmpty()) return;
+        Location target = CoreConfig.getArrivalTarget();
+        if (target != null) target.getWorld().setDifficulty(Difficulty.NORMAL);
     }
 
     private void draw() {
