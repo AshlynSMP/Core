@@ -3,6 +3,7 @@ package nl.ashlyn.core;
 import nl.ashlyn.core.commands.ActCommand;
 import nl.ashlyn.core.commands.ArrivalCommand;
 import nl.ashlyn.core.commands.EventCommand;
+import nl.ashlyn.core.commands.InvseeCommand;
 import nl.ashlyn.core.commands.LimboCommand;
 import nl.ashlyn.core.commands.LinkCommand;
 import nl.ashlyn.core.commands.MaintenanceCommand;
@@ -132,6 +133,9 @@ public final class Core extends JavaPlugin {
         LimboCommand limboCommand = new LimboCommand();
         registerCommand("limbo", limboCommand);
         getCommand("limbo").setTabCompleter(limboCommand);
+        InvseeCommand invseeCommand = new InvseeCommand();
+        registerCommand("invsee", invseeCommand);
+        getCommand("invsee").setTabCompleter(invseeCommand);
     }
 
     private void registerListeners() {

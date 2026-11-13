@@ -35,3 +35,11 @@ commands:
     limbo:
         description: Regel de limbo, waar spelers heen gaan als ze doodgaan.
         usage: /limbo [aan | uit | start | uitgang [straal] | weg <speler>]
+    invsee:
+        description: Bekijk en bewerk de inventory van een speler, alleen voor ops.
+        usage: /invsee <speler>
+        permission: core.invsee
+permissions:
+    core.invsee:
+        description: Gebruik /invsee.
+        default: op
