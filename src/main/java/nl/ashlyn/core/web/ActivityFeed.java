@@ -2,6 +2,7 @@ package nl.ashlyn.core.web;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.advancement.AdvancementDisplay;
 import org.bukkit.entity.Player;
@@ -45,7 +46,23 @@ public class ActivityFeed implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent event) {
-        add(create("death", event.getEntity()));
+        Player player = event.getEntity();
+        JsonObject json = create("death", player);
+        String cause = deathCause(player, event.getDeathMessage());
+        if (cause != null) json.addProperty("cause", cause);
+        add(json);
+    }
+
+    /**
+     * Turns "[✞] Sjors was slain by Zombie" into "was slain by Zombie"
+     */
+    private String deathCause(Player player, String message) {
+        if (message == null) return null;
+        String text = ChatColor.stripColor(message).trim();
+        if (text.startsWith("[✞]")) text = text.substring(3).trim();
+        if (!text.startsWith(player.getName() + " ")) return null;
+        String cause = text.substring(player.getName().length()).trim();
+        return cause.isEmpty() ? null : cause;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
