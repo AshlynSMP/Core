@@ -6,6 +6,7 @@ import nl.ashlyn.core.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Difficulty;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -30,6 +31,7 @@ import java.util.UUID;
  * The trail follows a walkable path (see ArrivalPath), so it goes around trees and over hills instead of through them.
  * The path is found again from where the player is every 2 seconds, so it keeps up as they walk.
  * Where each trail starts is kept in arrivals.yml under "trail", so it survives logging out and restarts.
+ * Players walk their trail in adventure mode and go to survival once they reach the target.
  * The arrival starts in peaceful; once the last player reaches the target the world goes to normal.
  * Only touch this from the main thread.
  */
@@ -63,24 +65,28 @@ public class ArrivalTrail {
 
     /**
      * Give a player a trail from where they are now to the arrival target, if a target is set in their world
+     * @return If the player got a trail
      */
-    public static void begin(Player player) {
+    public static boolean begin(Player player) {
         Location target = CoreConfig.getArrivalTarget();
-        if (target == null || !target.getWorld().equals(player.getWorld())) return;
+        if (target == null || !target.getWorld().equals(player.getWorld())) return false;
         paths.remove(player.getUniqueId());
         pathFrom.remove(player.getUniqueId());
         starts().put(player.getUniqueId(), player.getLocation().toVector());
         save();
+        return true;
     }
 
     /**
-     * Take away a player's trail
+     * Take away a player's trail, and put them back in survival
      */
     public static void end(UUID uuid) {
         paths.remove(uuid);
         pathFrom.remove(uuid);
         if (starts().remove(uuid) == null) return;
         save();
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && player.getGameMode() == GameMode.ADVENTURE) player.setGameMode(GameMode.SURVIVAL);
         if (!starts.isEmpty()) return;
         Location target = CoreConfig.getArrivalTarget();
         if (target != null) target.getWorld().setDifficulty(Difficulty.NORMAL);

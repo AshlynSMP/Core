@@ -30,6 +30,7 @@ import java.util.UUID;
  * until a leader spreads them over the forest at night and they see the Act 1 title from the resource pack.
  * The world stays peaceful until everyone has followed their trail to the arrival target.
  * Who already got there is kept in arrivals.yml.
+ * Players are in adventure mode from the hok until they reach the end of their trail, so they can't break anything.
  * Only touch this from the main thread.
  */
 public class Arrival {
@@ -80,6 +81,7 @@ public class Arrival {
     public static void sendToHok(Player player) {
         Location hok = CoreConfig.getHok();
         if (hok != null) player.teleport(hok);
+        if (player.getGameMode() == GameMode.SURVIVAL) player.setGameMode(GameMode.ADVENTURE);
     }
 
     public static int start() {
@@ -111,7 +113,7 @@ public class Arrival {
 
         player.teleport(spot);
         setArrived(player.getUniqueId(), true);
-        ArrivalTrail.begin(player);
+        if (!ArrivalTrail.begin(player) && player.getGameMode() == GameMode.ADVENTURE) player.setGameMode(GameMode.SURVIVAL);
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0, false, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 100, 0, false, false, false));
         sendTitle(player);
