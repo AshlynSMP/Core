@@ -12,6 +12,7 @@ import nl.ashlyn.core.api.PlayerLinks;
 import nl.ashlyn.core.api.ServerEvent;
 import nl.ashlyn.core.wrapped.StatsTable;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,8 @@ import java.util.concurrent.TimeUnit;
  *   DELETE /api/portal/link    remove the link
  *   GET    /api/portal/events  planned and past events, with who comes and who was there
  *   POST   /api/portal/rsvp    {"time", "going": true | false | null} answer for an event
+ *   GET    /api/portal/chat    ?after=id gives the chat messages after that id
+ *   POST   /api/portal/chat    {"message"} chat in-game from the website
  *   /api/portal/admin/...      leaders only, see PortalAdmin
  * During maintenance only leaders get in. Accounts that aren't linked yet can still link,
  * since only leaders can join the server to type the code.
@@ -43,16 +47,20 @@ public class PortalHandler {
     private static final int MAX_BODY = 4096;
     private static final int MAX_LOGINS = 10;
     private static final long WINDOW_MILLIS = TimeUnit.MINUTES.toMillis(1);
+    private static final long CHAT_COOLDOWN_MILLIS = 1500;
 
     private final Core plugin;
     private final WatchdogAuth watchdog;
     private final PortalViews views;
     private final PortalAdmin admin;
+    private final ChatFeed chat;
     private final Map<String, Deque<Long>> attempts = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> lastChat = new ConcurrentHashMap<>();
 
-    public PortalHandler(Core plugin, WatchdogAuth watchdog, ActivityFeed activity, StatsTable stats) {
+    public PortalHandler(Core plugin, WatchdogAuth watchdog, ActivityFeed activity, StatsTable stats, ChatFeed chat) {
         this.plugin = plugin;
         this.watchdog = watchdog;
+        this.chat = chat;
         this.views = new PortalViews(plugin, activity, stats);
         this.admin = new PortalAdmin(this);
     }
@@ -106,6 +114,13 @@ public class PortalHandler {
                 }
                 JsonObject body = body(exchange);
                 if (body != null) reply(exchange, callSync(() -> rsvp(identity, body), null));
+            }
+            case "/api/portal/chat" -> {
+                if (method.equals("GET")) reply(exchange, callSync(() -> chatJson(identity, exchange.getRequestURI().getQuery()), null));
+                else if (method.equals("POST")) {
+                    JsonObject body = body(exchange);
+                    if (body != null) reply(exchange, callSync(() -> chat(identity, body), null));
+                } else notAllowed(exchange);
             }
             default -> send(exchange, 404, error("not-found"));
         }
@@ -168,6 +183,43 @@ public class PortalHandler {
 
         EventSignups.setAnswer(start, link.uuid(), going.isJsonNull() ? null : going.getAsBoolean());
         return ok(true);
+    }
+
+    private JsonObject chatJson(WatchdogAuth.Identity identity, String query) {
+        if (PlayerLinks.get(identity.subject()) == null) return error("not-linked");
+        long after = 0;
+        if (query != null) {
+            for (String part : query.split("&")) {
+                if (!part.startsWith("after=")) continue;
+                try {
+                    after = Long.parseLong(part.substring(6));
+                } catch (NumberFormatException ignored) {
+                    return error("bad-request");
+                }
+            }
+        }
+        JsonObject json = new JsonObject();
+        json.add("messages", chat.toJson(after));
+        return json;
+    }
+
+    private JsonObject chat(WatchdogAuth.Identity identity, JsonObject body) {
+        PlayerLinks.Link link = PlayerLinks.get(identity.subject());
+        if (link == null) return error("not-linked");
+        OfflinePlayer player = Bukkit.getOfflinePlayer(link.uuid());
+        if (player.isBanned() || player.getName() == null) return error("forbidden");
+
+        String text = string(body, "message");
+        if (text == null) return error("bad-request");
+        text = ChatFeed.clean(text);
+        if (text.isEmpty() || text.length() > ChatFeed.MAX_LENGTH) return error("bad-request");
+
+        long now = System.currentTimeMillis();
+        Long last = lastChat.get(link.uuid());
+        if (last != null && now - last < CHAT_COOLDOWN_MILLIS) return error("too-fast");
+        lastChat.put(link.uuid(), now);
+
+        return chat.send(player, text) ? ok(true) : error("chat-off");
     }
 
     <T> T callSync(Callable<T> task, T fallback) {

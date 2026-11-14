@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  * Small HTTP API for the AshlynSMP website.
  * GET /api/status returns the live server state as JSON (turn off with web.status-enabled).
  * /api/whitelist takes whitelist requests, see WhitelistHandler.
- * /api/portal/... is the player portal, see PortalHandler (turn on with web.portal.enabled).
+ * /api/portal/... is the player portal with its chat, see PortalHandler (turn on with web.portal.enabled).
  * /api/head/... and /api/body/... draw player heads from their skins, see HeadHandler.
  */
 public class WebServer {
@@ -36,6 +36,7 @@ public class WebServer {
     private JsonArray roster = new JsonArray();
     private ActivityFeed activity;
     private StatsTable stats;
+    private ChatFeed chat;
     private ExecutorService executor;
     private volatile String snapshot = "{\"online\":true}";
 
@@ -96,7 +97,9 @@ public class WebServer {
                     config.getString("web.portal.client-id", "ashlyn-portal"));
             stats = new StatsTable(plugin, plugin.getSeasonTracker());
             stats.start();
-            PortalHandler portal = new PortalHandler(plugin, watchdog, activity, stats);
+            chat = new ChatFeed(config.getInt("web.portal.chat-size", 100));
+            plugin.getServer().getPluginManager().registerEvents(chat, plugin);
+            PortalHandler portal = new PortalHandler(plugin, watchdog, activity, stats, chat);
             server.createContext("/api/portal/", exchange -> {
                 if (preflight(exchange, allowedOrigin)) return;
                 portal.handle(exchange);
@@ -116,6 +119,7 @@ public class WebServer {
         if (server != null) server.stop(0);
         if (executor != null) executor.shutdownNow();
         if (activity != null) HandlerList.unregisterAll(activity);
+        if (chat != null) HandlerList.unregisterAll(chat);
     }
 
     private static boolean preflight(HttpExchange exchange, String allowedOrigin) throws IOException {

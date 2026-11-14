@@ -47,3 +47,4 @@ web:
         enabled: false
         watchdog-url: 'https://watchdog.ashlyn.nl'
         client-id: 'ashlyn-portal'
+        chat-size: 100
