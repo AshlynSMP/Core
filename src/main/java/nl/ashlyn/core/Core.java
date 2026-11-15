@@ -15,6 +15,7 @@ import nl.ashlyn.core.arrival.ArrivalTrail;
 import nl.ashlyn.core.limbo.LimboTrail;
 import nl.ashlyn.core.listeners.ArrivalListener;
 import nl.ashlyn.core.listeners.EventAttendance;
+import nl.ashlyn.core.listeners.EventReminder;
 import nl.ashlyn.core.listeners.FinaleListener;
 import nl.ashlyn.core.listeners.LimboListener;
 import nl.ashlyn.core.listeners.MaintenanceListener;
@@ -147,6 +148,7 @@ public final class Core extends JavaPlugin {
         registerListener(new FinaleListener(), this);
         registerListener(new LimboListener(), this);
         registerListener(new EventAttendance(), this);
+        registerListener(new EventReminder(), this);
         registerListener(new ReloadCommandListener(), this);
     }
 

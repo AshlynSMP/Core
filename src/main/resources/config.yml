@@ -45,7 +45,7 @@ web:
         max-pending: 100
     portal:
         enabled: false
-        url: 'https://ashlyn.nl/portal'
+        url: 'https://smp.ashlyn.nl/portal'
         watchdog-url: 'https://watchdog.ashlyn.nl'
         client-id: 'ashlyn-portal'
         chat-size: 100
