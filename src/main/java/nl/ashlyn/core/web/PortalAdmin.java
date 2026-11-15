@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpExchange;
 import nl.ashlyn.core.api.CoreConfig;
 import nl.ashlyn.core.api.PlayerLinks;
 import nl.ashlyn.core.commands.MaintenanceCommand;
+import nl.ashlyn.core.listeners.EventReminder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -153,6 +154,7 @@ public class PortalAdmin {
         if (start <= System.currentTimeMillis()) return PortalHandler.error("in-the-past");
         CoreConfig.addEvent(name.strip(), start);
         CoreConfig.saveConfig();
+        EventReminder.announce(name.strip(), start);
         return PortalHandler.ok(true);
     }
 

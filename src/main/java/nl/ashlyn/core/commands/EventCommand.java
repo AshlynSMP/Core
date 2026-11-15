@@ -2,6 +2,7 @@ package nl.ashlyn.core.commands;
 
 import nl.ashlyn.core.api.CoreConfig;
 import nl.ashlyn.core.api.ServerEvent;
+import nl.ashlyn.core.listeners.EventReminder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -164,6 +165,7 @@ public class EventCommand implements CommandExecutor, TabCompleter {
     private void setEvent(CommandSender sender, String name, long time) {
         CoreConfig.addEvent(name, time);
         CoreConfig.saveConfig();
+        EventReminder.announce(name, time);
         sender.sendMessage(ChatColor.GREEN + "Event gezet: " + ChatColor.WHITE + name
                 + ChatColor.GREEN + " op " + format(time) + ". De website telt nu af.");
     }
