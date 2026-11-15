@@ -298,6 +298,23 @@ public class CoreConfig {
     }
 
     /**
+     * Check if the player portal is turned on
+     * @return true if the portal is enabled, false otherwise
+     */
+    public static boolean isPortalEnabled() {
+        return Core.getCoreConfig().getBoolean("web.enabled", false)
+                && Core.getCoreConfig().getBoolean("web.portal.enabled", false);
+    }
+
+    /**
+     * Get the address of the player portal on the website
+     * @return The portal url
+     */
+    public static String getPortalUrl() {
+        return Core.getCoreConfig().getString("web.portal.url", "https://ashlyn.nl/portal");
+    }
+
+    /**
      * Open or close the whitelist form on the website
      * @param open true to take requests
      */

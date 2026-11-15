@@ -19,6 +19,7 @@ import nl.ashlyn.core.listeners.FinaleListener;
 import nl.ashlyn.core.listeners.LimboListener;
 import nl.ashlyn.core.listeners.MaintenanceListener;
 import nl.ashlyn.core.listeners.ReloadCommandListener;
+import nl.ashlyn.core.listeners.LinkReminder;
 import nl.ashlyn.core.listeners.RequestsReminder;
 import nl.ashlyn.core.utils.Logger;
 import nl.ashlyn.core.web.WebServer;
@@ -140,6 +141,7 @@ public final class Core extends JavaPlugin {
 
     private void registerListeners() {
         registerListener(new RequestsReminder(), this);
+        registerListener(new LinkReminder(), this);
         registerListener(new ArrivalListener(), this);
         registerListener(new MaintenanceListener(), this);
         registerListener(new FinaleListener(), this);

@@ -56,6 +56,7 @@ Players sign in on the website's portal with their Watchdog account and link the
 web:
     portal:
         enabled: true
+        url: 'https://ashlyn.nl/portal'
         watchdog-url: 'https://watchdog.ashlyn.nl'
         client-id: 'ashlyn-portal'
 ```
